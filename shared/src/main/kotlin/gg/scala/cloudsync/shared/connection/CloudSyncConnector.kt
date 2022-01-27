@@ -21,7 +21,6 @@ import java.io.File
 import java.util.logging.Level
 import kotlin.properties.Delegates
 
-
 /**
  * @author GrowlyX
  * @since 1/21/2022

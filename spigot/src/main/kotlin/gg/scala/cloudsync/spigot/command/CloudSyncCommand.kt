@@ -1,4 +1,4 @@
-package gg.scala.cloudsync.command.commands
+package gg.scala.cloudsync.spigot.command
 
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
@@ -36,7 +36,7 @@ object CloudSyncCommand : BaseCommand()
     {
         player.sendMessage("${CC.GREEN}Finding pending plugin updates...")
 
-        CloudSyncConnector.usePendingUpdates { name, asset, _ ->
+        CloudSyncConnector.usePendingUpdates { asset, _, name ->
             val fancyMessage = FancyMessage()
             fancyMessage.withMessage("${CC.D_AQUA}$name${CC.YELLOW} is outdated! The newest version is: ${CC.GREEN}${asset.maven2!!.version}${CC.YELLOW}.")
             fancyMessage.sendToPlayer(player)

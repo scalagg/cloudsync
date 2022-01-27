@@ -26,9 +26,9 @@ object CloudSyncListenerService
         Events.subscribe(PlayerJoinEvent::class.java)
             .filter { it.player.isOp }
             .handler {
-                CloudSyncConnector.usePendingUpdates { name, asset, _ ->
+                CloudSyncConnector.usePendingUpdates { asset, _, name ->
                     val fancyMessage = FancyMessage()
-                    fancyMessage.withMessage("${CC.D_AQUA}[$name]${CC.YELLOW} You're not up-to-date! The newest version is: ${CC.GREEN}${asset.maven2!!.version}${CC.YELLOW}.")
+                    fancyMessage.withMessage("${CC.GREEN}[$name]${CC.YELLOW} I'm outdated! The newest version is: ${CC.GREEN}${asset.maven2!!.version}${CC.YELLOW}.")
                     fancyMessage.sendToPlayer(it.player)
                 }
             }

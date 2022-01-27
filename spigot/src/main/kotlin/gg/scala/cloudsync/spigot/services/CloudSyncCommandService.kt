@@ -1,7 +1,7 @@
 package gg.scala.cloudsync.spigot.services
 
 import gg.scala.cloudsync.spigot.ScalaCloudSyncSpigot
-import gg.scala.cloudsync.command.commands.CloudSyncCommand
+import gg.scala.cloudsync.spigot.command.CloudSyncCommand
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
