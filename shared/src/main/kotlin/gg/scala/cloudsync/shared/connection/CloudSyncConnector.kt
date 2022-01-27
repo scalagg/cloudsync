@@ -18,6 +18,7 @@ import kong.unirest.Unirest
 import kong.unirest.UnirestInstance
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.util.concurrent.CompletableFuture
 import java.util.logging.Level
 import kotlin.properties.Delegates
 
@@ -50,7 +51,7 @@ object CloudSyncConnector
 
     private fun applyPendingUpdates()
     {
-        usePendingUpdates { asset, file, name ->
+        usePendingUpdatesSync { asset, file, name ->
             val start = System.currentTimeMillis()
             shared.logger.info("Downloading the latest $name archive...")
 
@@ -75,15 +76,6 @@ object CloudSyncConnector
                     exception
                 )
             }
-        }
-    }
-
-    private fun getTrackedAssetsAsync(
-        lambda: (String, ComponentAssetWrapper, ComponentWrapper) -> Unit
-    )
-    {
-        Repositories.asyncComponents().thenAccept { request ->
-            useTrackedAssets(request, lambda)
         }
     }
 
@@ -117,7 +109,7 @@ object CloudSyncConnector
         }
     }
 
-    fun usePendingUpdates(
+    private fun usePendingUpdatesSync(
         lambda: (ComponentAssetWrapper, File, String) -> Unit
     )
     {
@@ -125,7 +117,7 @@ object CloudSyncConnector
             shared.fileContainer, "plugins"
         )
 
-        getTrackedAssetsAsync { discoverable, asset, _ ->
+        useTrackedAssets { discoverable, asset, _ ->
             val fileToOverride = discoverable
                 .split(":")[2]
 
@@ -136,8 +128,6 @@ object CloudSyncConnector
                     it.name.equals(jarFile, true)
                 }
 
-            // creating the file if it
-            // doesn't already exist
             if (file != null)
             {
                 // checking if the hashes are the same, so we can save some time
@@ -152,6 +142,15 @@ object CloudSyncConnector
                     lambda.invoke(asset, file, fileToOverride)
                 }
             }
+        }
+    }
+
+    fun usePendingUpdates(
+        lambda: (ComponentAssetWrapper, File, String) -> Unit
+    )
+    {
+        CompletableFuture.runAsync {
+            usePendingUpdatesSync(lambda)
         }
     }
 
