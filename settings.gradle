@@ -1,2 +1,4 @@
 rootProject.name = 'cloudsync'
-
+include "shared"
+include "spigot"
+include "velocity"

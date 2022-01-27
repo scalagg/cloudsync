@@ -24,7 +24,7 @@ rebel.xml
 
 .gradle
 **/build/
-!src/**/build/
+!shared/src/**/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting

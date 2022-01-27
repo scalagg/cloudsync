@@ -38,6 +38,23 @@ subprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
     apply plugin: "org.jetbrains.kotlin.kapt"
 
+    dependencies {
+        if (project.name != "shared") {
+            implementation project(":shared")
+
+            implementation 'gg.scala.flavor:flavor:0.1.3.1'
+            implementation 'com.konghq:unirest-java:3.13.6:standalone'
+        } else {
+            compileOnly 'gg.scala.flavor:flavor:0.1.3.1'
+            compileOnly 'com.konghq:unirest-java:3.13.6:standalone'
+        }
+
+        compileOnly 'com.google.guava:guava:31.0.1-jre'
+        compileOnly 'commons-io:commons-io:2.11.0'
+
+        compileOnly 'net.evilblock.cubed:serializers:1.3.3'
+    }
+
     compileKotlin {
         kotlinOptions.javaParameters = true
         kotlinOptions.jvmTarget = "1.8"
@@ -55,6 +72,15 @@ subprojects {
         exclude '**/*.kotlin_metadata'
         exclude '**/*.kotlin_module'
         exclude '**/*.kotlin_builtins'
+
+        if (project.name != "shared")
+        {
+            final String relocation =
+                    "gg.scala.cloudsync.${project.name}.shadow"
+
+            relocate "gg.scala.flavor", "${relocation}.flavor"
+            relocate "com.konghq", "${relocation}.unirest"
+        }
 
         exclude "META-INF/"
 
