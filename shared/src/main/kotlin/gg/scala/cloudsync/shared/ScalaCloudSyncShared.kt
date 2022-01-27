@@ -23,6 +23,9 @@ object ScalaCloudSyncShared
 
     private lateinit var platform: ScalaCloudSyncPlatform
 
+    val logger: Logger
+        get() = platform.getLogger()
+
     private val flavor by lazy {
         Flavor.create<ScalaCloudSyncShared>(
             FlavorOptions(platform.getLogger(), "gg.scala.cloudsync.shared")
