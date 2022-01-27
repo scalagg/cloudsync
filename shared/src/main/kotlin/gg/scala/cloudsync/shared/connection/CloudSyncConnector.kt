@@ -44,48 +44,16 @@ object CloudSyncConnector
     @Close
     fun close()
     {
-        // Get the plugins directory
-        val pluginDirectory = File(
-            shared.fileContainer, "plugins"
-        )
-
         shared.reload()
 
-        useTrackedAssets { discoverable, asset, _ ->
-            val fileToOverride = discoverable
-                .split(":")[2]
+        applyPendingUpdates()
+    }
 
-            val jarFile = "$fileToOverride.jar"
-
-            val file = pluginDirectory.listFiles()!!
-                .firstOrNull {
-                    it.name.equals(jarFile, true)
-                }
-                ?: File(pluginDirectory, jarFile)
-
-            // creating the file if it
-            // doesn't already exist
-            if (!file.exists())
-            {
-                file.createNewFile()
-            } else
-            {
-                // checking if the hashes are the same, so we can save some time
-                // and avoid updating already up-to-date archives
-                val md5Hash = Files
-                    .asByteSource(file)
-                    .hash(Hashing.md5())
-                    .toString()
-
-                if (md5Hash == asset.checksum.md5)
-                {
-                    shared.logger.info("You're running the latest version of $fileToOverride!")
-                    return@useTrackedAssets
-                }
-            }
-
+    private fun applyPendingUpdates()
+    {
+        usePendingUpdates { asset, file, name ->
             val start = System.currentTimeMillis()
-            shared.logger.info("Downloading the latest $fileToOverride archive...")
+            shared.logger.info("Downloading the latest $name archive...")
 
             try
             {
@@ -96,7 +64,7 @@ object CloudSyncConnector
                 }
 
                 shared.logger.warning(
-                    "Successfully updated $fileToOverride (took ${
+                    "Successfully updated $name (took ${
                         System.currentTimeMillis() - start
                     }ms)!"
                 )
@@ -151,14 +119,14 @@ object CloudSyncConnector
     }
 
     fun usePendingUpdates(
-        lambda: (String, ComponentAssetWrapper, ComponentWrapper) -> Unit
+        lambda: (ComponentAssetWrapper, File, String) -> Unit
     )
     {
         val pluginDirectory = File(
             shared.fileContainer, "plugins"
         )
 
-        getTrackedAssetsAsync { discoverable, asset, wrapper ->
+        getTrackedAssetsAsync { discoverable, asset, _ ->
             val fileToOverride = discoverable
                 .split(":")[2]
 
@@ -182,7 +150,7 @@ object CloudSyncConnector
 
                 if (md5Hash != asset.checksum.md5)
                 {
-                    lambda.invoke(fileToOverride, asset, wrapper)
+                    lambda.invoke(asset, file, fileToOverride)
                 }
             }
         }
