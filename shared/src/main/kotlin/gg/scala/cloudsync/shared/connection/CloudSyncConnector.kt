@@ -2,12 +2,13 @@ package gg.scala.cloudsync.shared.connection
 
 import com.google.common.hash.Hashing
 import com.google.common.io.Files
-import gg.scala.cloudsync.shared.repository.Repositories
-import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
+import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
+import gg.scala.cloudsync.shared.repository.Repositories
 import gg.scala.cloudsync.shared.repository.component.ComponentWrapper
 import gg.scala.cloudsync.shared.repository.component.asset.ComponentAssetWrapper
+import gg.scala.cloudsync.shared.repository.repositories.ComponentPaginatedRepositoryWrapper
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
@@ -17,7 +18,6 @@ import kong.unirest.Unirest
 import kong.unirest.UnirestInstance
 import org.apache.commons.io.FileUtils
 import java.io.File
-import java.util.concurrent.CompletableFuture
 import java.util.logging.Level
 import kotlin.properties.Delegates
 
@@ -51,22 +51,7 @@ object CloudSyncConnector
 
         shared.reload()
 
-        getTrackedAssets().forEach { component ->
-            val discoverable = CloudSyncDiscoveryService
-                .discoverable.assets
-                .firstOrNull {
-                    it.split(":")[0] == component.group &&
-                            it.split(":")[1] == component.name
-                }
-                ?: return@forEach
-
-            val asset = component.assets
-                .firstOrNull {
-                    it.maven2 != null &&
-                            it.maven2.extension == "jar"
-                }
-                ?: return@forEach
-
+        useTrackedAssets { discoverable, asset, _ ->
             val fileToOverride = discoverable
                 .split(":")[2]
 
@@ -95,7 +80,7 @@ object CloudSyncConnector
                 if (md5Hash == asset.checksum.md5)
                 {
                     shared.logger.info("You're running the latest version of $fileToOverride!")
-                    return@forEach
+                    return@useTrackedAssets
                 }
             }
 
@@ -126,46 +111,26 @@ object CloudSyncConnector
         }
     }
 
-    fun getTrackedAssetsAsync(): CompletableFuture<List<ComponentWrapper>>
+    private fun getTrackedAssetsAsync(
+        lambda: (String, ComponentAssetWrapper, ComponentWrapper) -> Unit
+    )
     {
-        return Repositories.asyncComponents().thenApply { request ->
-            val assets = mutableListOf<ComponentWrapper>()
-
-            for (component in request.items)
-            {
-                // Checks if this asset should be updated
-                CloudSyncDiscoveryService
-                    .discoverable.assets
-                    .firstOrNull {
-                        it.split(":")[0] == component.group &&
-                                it.split(":")[1] == component.name
-                    }
-                    ?: continue
-
-                // Find the jar archive asset we need
-                component.assets
-                    .firstOrNull {
-                        it.maven2 != null &&
-                                it.maven2.extension == "jar"
-                    }
-                    ?: continue
-
-                assets.add(component)
-            }
-
-            return@thenApply assets
+        Repositories.asyncComponents().thenAccept { request ->
+            useTrackedAssets(request, lambda)
         }
     }
 
-    private fun getTrackedAssets(): List<ComponentWrapper>
+    private fun useTrackedAssets(
+        components: ComponentPaginatedRepositoryWrapper? = null,
+        lambda: (String, ComponentAssetWrapper, ComponentWrapper) -> Unit
+    )
     {
-        val assets = mutableListOf<ComponentWrapper>()
-        val request = Repositories.components()
+        val request = components ?: Repositories.components()
 
         for (component in request.items)
         {
             // Checks if this asset should be updated
-            CloudSyncDiscoveryService
+            val discoverable = CloudSyncDiscoveryService
                 .discoverable.assets
                 .firstOrNull {
                     it.split(":")[0] == component.group &&
@@ -174,17 +139,15 @@ object CloudSyncConnector
                 ?: continue
 
             // Find the jar archive asset we need
-            component.assets
+            val asset = component.assets
                 .firstOrNull {
                     it.maven2 != null &&
                             it.maven2.extension == "jar"
                 }
                 ?: continue
 
-            assets.add(component)
+            lambda.invoke(discoverable, asset, component)
         }
-
-        return assets
     }
 
     fun usePendingUpdates(
@@ -195,48 +158,31 @@ object CloudSyncConnector
             shared.fileContainer, "plugins"
         )
 
-        getTrackedAssetsAsync().thenApplyAsync { wrappers ->
-            wrappers.forEach { component ->
-                val discoverable = CloudSyncDiscoveryService
-                    .discoverable.assets
-                    .firstOrNull {
-                        it.split(":")[0] == component.group &&
-                                it.split(":")[1] == component.name
-                    }
-                    ?: return@forEach
+        getTrackedAssetsAsync { discoverable, asset, wrapper ->
+            val fileToOverride = discoverable
+                .split(":")[2]
 
-                val asset = component.assets
-                    .firstOrNull {
-                        it.maven2 != null &&
-                                it.maven2.extension == "jar"
-                    }
-                    ?: return@forEach
+            val jarFile = "$fileToOverride.jar"
 
-                val fileToOverride = discoverable
-                    .split(":")[2]
+            val file = pluginDirectory.listFiles()!!
+                .firstOrNull {
+                    it.name.equals(jarFile, true)
+                }
 
-                val jarFile = "$fileToOverride.jar"
+            // creating the file if it
+            // doesn't already exist
+            if (file != null)
+            {
+                // checking if the hashes are the same, so we can save some time
+                // and avoid updating already up-to-date archives
+                val md5Hash = Files
+                    .asByteSource(file)
+                    .hash(Hashing.md5())
+                    .toString()
 
-                val file = pluginDirectory.listFiles()!!
-                    .firstOrNull {
-                        it.name.equals(jarFile, true)
-                    }
-
-                // creating the file if it
-                // doesn't already exist
-                if (file != null)
+                if (md5Hash != asset.checksum.md5)
                 {
-                    // checking if the hashes are the same, so we can save some time
-                    // and avoid updating already up-to-date archives
-                    val md5Hash = Files
-                        .asByteSource(file)
-                        .hash(Hashing.md5())
-                        .toString()
-
-                    if (md5Hash != asset.checksum.md5)
-                    {
-                        lambda.invoke(fileToOverride, asset, component)
-                    }
+                    lambda.invoke(fileToOverride, asset, wrapper)
                 }
             }
         }
