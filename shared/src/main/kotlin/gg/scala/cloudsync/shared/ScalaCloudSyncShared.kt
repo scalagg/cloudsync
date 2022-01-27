@@ -25,12 +25,8 @@ object ScalaCloudSyncShared
 
     private val flavor by lazy {
         Flavor.create<ScalaCloudSyncShared>(
-            FlavorOptions(logger, "gg.scala.cloudsync.shared")
+            FlavorOptions(platform.getLogger(), "gg.scala.cloudsync.shared")
         )
-    }
-
-    val logger: Logger by lazy {
-        Logger.getLogger("ScalaCloudSyncShared")
     }
 
     fun reload()

@@ -7,6 +7,7 @@ import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.flavor.inject.Inject
 import org.bukkit.Bukkit
 import xyz.mkotb.configapi.ConfigFactory
+import java.util.logging.Logger
 
 /**
  * @author GrowlyX
@@ -16,6 +17,8 @@ object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
 {
     @Inject
     lateinit var spigot: ScalaCloudSyncSpigot
+
+    override fun getLogger(): Logger = spigot.logger
 
     override fun configureServices(shared: ScalaCloudSyncShared)
     {
