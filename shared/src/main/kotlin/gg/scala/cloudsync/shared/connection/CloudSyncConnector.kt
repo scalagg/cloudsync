@@ -103,7 +103,7 @@ object CloudSyncConnector
 
             // Find the jar archive asset we need
             val asset = component.assets
-                .firstOrNull {
+                .lastOrNull {
                     it.maven2 != null &&
                             it.maven2.extension == "jar"
                 }
