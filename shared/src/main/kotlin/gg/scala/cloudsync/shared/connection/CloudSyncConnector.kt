@@ -39,6 +39,10 @@ object CloudSyncConnector
     fun configure()
     {
         unirest = Unirest.primaryInstance()
+
+        usePendingUpdates { asset, _, name ->
+            shared.logger.warning("$name is outdated! Restart your server to update this plugin! (${asset.maven2?.version})")
+        }
     }
 
     @Close
@@ -53,7 +57,7 @@ object CloudSyncConnector
     {
         usePendingUpdatesSync { asset, file, name ->
             val start = System.currentTimeMillis()
-            shared.logger.info("Downloading the latest $name archive...")
+            shared.logger.info("Downloading the latest $name (v${asset.maven2?.version}) archive...")
 
             try
             {
@@ -85,8 +89,9 @@ object CloudSyncConnector
     )
     {
         val request = components ?: Repositories.components()
+        val discovered = mutableListOf<String>()
 
-        for (component in request.items)
+        for (component in request.items.asReversed())
         {
             // Checks if this asset should be updated
             val discoverable = CloudSyncDiscoveryService
@@ -97,15 +102,19 @@ object CloudSyncConnector
                 }
                 ?: continue
 
+            if (discovered.contains(discoverable))
+                continue
+
             // Find the jar archive asset we need
             val asset = component.assets
-                .lastOrNull {
+                .firstOrNull {
                     it.maven2 != null &&
                             it.maven2.extension == "jar"
                 }
                 ?: continue
 
             lambda.invoke(discoverable, asset, component)
+            discovered.add(discoverable)
         }
     }
 
