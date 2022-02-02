@@ -85,7 +85,6 @@ object CloudSyncConnector
     )
     {
         val request = components ?: Repositories.components()
-        val iterated = mutableListOf<String>()
 
         for (component in request.items)
         {
@@ -98,9 +97,6 @@ object CloudSyncConnector
                 }
                 ?: continue
 
-            if (iterated.contains(discoverable))
-                continue
-
             // Find the jar archive asset we need
             val asset = component.assets
                 .lastOrNull {
@@ -110,7 +106,6 @@ object CloudSyncConnector
                 ?: continue
 
             lambda.invoke(discoverable, asset, component)
-            iterated.add(discoverable)
         }
     }
 
