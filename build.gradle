@@ -3,13 +3,13 @@ import java.util.stream.Collectors
 plugins {
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id "org.jetbrains.kotlin.kapt" version "1.6.10"
+    id "org.jetbrains.kotlin.jvm" version "1.6.20"
+    id "org.jetbrains.kotlin.kapt" version "1.6.20"
 }
 
 allprojects {
-    version '1.0.1'
-    group 'gg.scala.cloudsync'
+    version "1.0.1"
+    group "gg.scala.cloudsync"
     description "Advanced server <-> cloud synchronization platform"
 
     repositories {
@@ -27,7 +27,7 @@ allprojects {
         }
 
         maven { url "https://jitpack.io" }
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 }
 
@@ -42,17 +42,17 @@ subprojects {
         if (project.name != "shared") {
             implementation project(":shared")
 
-            implementation 'gg.scala.flavor:flavor:0.1.3.1'
-            implementation 'com.konghq:unirest-java:3.13.6:standalone'
+            implementation "gg.scala.flavor:flavor:0.1.3.2"
+            implementation "com.konghq:unirest-java:3.13.6:standalone"
         } else {
-            compileOnly 'gg.scala.flavor:flavor:0.1.3.1'
-            compileOnly 'com.konghq:unirest-java:3.13.6:standalone'
+            compileOnly "gg.scala.flavor:flavor:0.1.3.1"
+            compileOnly "com.konghq:unirest-java:3.13.6:standalone"
         }
 
-        compileOnly 'com.google.guava:guava:31.0.1-jre'
-        compileOnly 'commons-io:commons-io:2.11.0'
+        compileOnly "com.google.guava:guava:31.0.1-jre"
+        compileOnly "commons-io:commons-io:2.11.0"
 
-        compileOnly 'net.evilblock.cubed:serializers:1.3.3'
+        compileOnly "net.evilblock.cubed:serializers:1.3.5"
     }
 
     compileKotlin {
@@ -63,15 +63,15 @@ subprojects {
     compileJava {
         options.compilerArgs += ["-parameters"]
         options.fork = true
-        options.forkOptions.executable = 'javac'
+        options.forkOptions.executable = "javac"
     }
 
     shadowJar {
         archiveClassifier.set("")
 
-        exclude '**/*.kotlin_metadata'
-        exclude '**/*.kotlin_module'
-        exclude '**/*.kotlin_builtins'
+        exclude "**/*.kotlin_metadata"
+        exclude "**/*.kotlin_module"
+        exclude "**/*.kotlin_builtins"
 
         if (project.name != "shared")
         {
