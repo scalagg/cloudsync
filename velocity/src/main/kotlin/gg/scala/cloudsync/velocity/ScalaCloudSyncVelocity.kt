@@ -1,0 +1,62 @@
+package gg.scala.cloudsync.velocity
+
+import com.google.inject.Inject
+import com.velocitypowered.api.event.PostOrder
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
+import com.velocitypowered.api.plugin.Plugin
+import com.velocitypowered.api.plugin.annotation.DataDirectory
+import com.velocitypowered.api.proxy.ProxyServer
+import gg.scala.cloudsync.shared.ScalaCloudSyncShared
+import java.io.File
+import java.nio.file.Path
+import java.util.logging.Logger
+import kotlin.properties.Delegates
+
+/**
+ * @author GrowlyX
+ * @since 4/4/2022
+ */
+@Plugin(
+    id = "cloudsync",
+    name = "cloudsync",
+    description = "Advanced server <-> cloud synchronization platform.",
+    version = "1.0.1",
+    url = "https://scala.gg/",
+    authors = ["Scala"]
+)
+class ScalaCloudSyncVelocity
+@Inject
+constructor(
+    val server: ProxyServer,
+    val logger: Logger,
+    @DataDirectory
+    private val directory: Path
+)
+{
+    companion object
+    {
+        @JvmStatic
+        var INSTANCE by Delegates.notNull<ScalaCloudSyncVelocity>()
+    }
+
+    val directoryFile: File = directory
+        .toFile()
+        .apply {
+            if (!exists())
+                mkdirs()
+        }
+
+    @Subscribe
+    fun onInitialize(event: ProxyInitializeEvent)
+    {
+        ScalaCloudSyncShared.enable(ScalaCloudSyncVelocityPlatform)
+    }
+
+    @Subscribe
+    fun onInitialize(event: ProxyShutdownEvent)
+    {
+        ScalaCloudSyncShared.disable()
+    }
+}
