@@ -4,6 +4,8 @@ import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
+import java.lang.reflect.Type
 import kotlin.properties.Delegates
 
 /**
@@ -30,5 +32,9 @@ object CloudSyncAuthenticationService
     class ScalaConnectionAuthenticationWrapper(
         val username: String = "admin",
         val password: String = "password"
-    )
+    ) : AbstractTypeSerializable
+    {
+        override fun getAbstractType() =
+            ScalaConnectionAuthenticationWrapper::class.java
+    }
 }

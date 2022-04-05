@@ -3,6 +3,7 @@ package gg.scala.cloudsync.velocity.settings
 import com.google.common.io.Files
 import gg.scala.cloudsync.velocity.ScalaCloudSyncVelocity
 import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import java.io.File
 import kotlin.reflect.KClass
@@ -13,7 +14,7 @@ import kotlin.reflect.KClass
  */
 object VelocitySettingsProcessor
 {
-    val settings = mutableMapOf<KClass<*>, VelocitySettingsModel>()
+    val settings = mutableMapOf<KClass<*>, AbstractTypeSerializable>()
 
     fun initialLoad()
     {
@@ -21,7 +22,7 @@ object VelocitySettingsProcessor
             it.setPrettyPrinting()
             it.registerTypeAdapter(
                 VelocitySettingsModel::class.java,
-                AbstractTypeSerializer<VelocitySettingsModel>()
+                AbstractTypeSerializer<AbstractTypeSerializable>()
             )
         }
 
@@ -34,20 +35,20 @@ object VelocitySettingsProcessor
         return settings[T::class] as T
     }
 
-    inline fun <reified T> loadSettings(id: String)
+    inline fun <reified T : AbstractTypeSerializable> loadSettings(id: String)
     {
-        saveSettingsToFile(T::class, id, commit = false)
+        saveSettingsToFile(T::class, id)
 
         val reader = File(
             ScalaCloudSyncVelocity.INSTANCE.directoryFile,
             "$id.json"
         ).reader()
 
-        settings[T::class] = Serializers.gson.fromJson(reader, T::class.java) as VelocitySettingsModel
+        settings[T::class] = Serializers.gson.fromJson(reader, T::class.java)
     }
 
     fun saveSettingsToFile(
-        kClass: KClass<*>, id: String, commit: Boolean = true
+        kClass: KClass<*>, id: String
     )
     {
         val file = File(

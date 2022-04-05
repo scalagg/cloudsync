@@ -1,9 +1,11 @@
 package gg.scala.cloudsync.shared.discovery
 
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
+import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
 import kotlin.properties.Delegates
 
 /**
@@ -30,5 +32,9 @@ object CloudSyncDiscoveryService
             "gg.scala.lemon:bukkit:Lemon",
             "net.evilblock.cubed:bukkit:cubed-bukkit",
         )
-    )
+    ) : AbstractTypeSerializable
+    {
+        override fun getAbstractType() =
+            DiscoverableAssets::class.java
+    }
 }

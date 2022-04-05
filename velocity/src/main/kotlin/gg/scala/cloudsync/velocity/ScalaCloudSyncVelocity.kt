@@ -41,6 +41,11 @@ constructor(
         var INSTANCE by Delegates.notNull<ScalaCloudSyncVelocity>()
     }
 
+    init
+    {
+        INSTANCE = this
+    }
+
     val directoryFile: File = directory
         .toFile()
         .apply {

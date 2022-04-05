@@ -97,8 +97,10 @@ object CloudSyncConnector
             val discoverable = CloudSyncDiscoveryService
                 .discoverable.assets
                 .firstOrNull {
-                    it.split(":")[0] == component.group &&
-                            it.split(":")[1] == component.name
+                    val split = it.split(":")
+
+                    split[0] == component.group &&
+                        split[1] == component.name
                 }
                 ?: continue
 
