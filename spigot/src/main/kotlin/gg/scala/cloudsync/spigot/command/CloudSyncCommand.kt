@@ -5,6 +5,8 @@ import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.cloudsync.spigot.pagination.CloudSyncPaginatedResult
 import gg.scala.cloudsync.shared.repository.Repositories
 import gg.scala.cloudsync.shared.repository.component.ComponentWrapper
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -19,9 +21,10 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 1/22/2022
  */
+@AutoRegister
 @CommandAlias("cs|cloudsync")
 @CommandPermission("cloudsync.command")
-object CloudSyncCommand : BaseCommand()
+object CloudSyncCommand : ScalaCommand()
 {
     @Default
     @HelpCommand

@@ -1,9 +1,10 @@
 package gg.scala.cloudsync.spigot
 
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
+import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
+import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
-import gg.scala.flavor.Flavor
-import gg.scala.flavor.FlavorOptions
+import gg.scala.commons.config.annotations.ContainerConfig
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 
@@ -13,32 +14,36 @@ import me.lucko.helper.plugin.ap.PluginDependency
  */
 @Plugin(
     name = "cloudsync",
+    apiVersion = "1.18",
     description = "Advanced server <-> cloud synchronization platform.",
     depends = [
         PluginDependency("Cubed")
     ]
 )
+@ContainerConfig(
+    value = "authentication",
+    model = CloudSyncAuthenticationService
+        .ScalaConnectionAuthenticationWrapper::class
+)
+@ContainerConfig(
+    value = "discoverable",
+    model = CloudSyncDiscoveryService
+        .DiscoverableAssets::class
+)
 class ScalaCloudSyncSpigot : ExtendedScalaPlugin()
 {
-    private val flavor by lazy {
-        Flavor.create<ScalaCloudSyncSpigot>(
-            FlavorOptions(logger, "gg.scala.cloudsync.spigot")
-        )
-    }
-
     override fun enable()
     {
-        flavor.bind<ScalaCloudSyncSpigot>() to this
-        flavor.inject(ScalaCloudSyncSpigotPlatform)
+        flavor {
+            inject(ScalaCloudSyncSpigotPlatform)
+        }
 
-        ScalaCloudSyncShared.enable(ScalaCloudSyncSpigotPlatform)
-
-        flavor.startup()
+        ScalaCloudSyncShared
+            .enable(ScalaCloudSyncSpigotPlatform)
     }
 
     override fun disable()
     {
-        flavor.close()
         ScalaCloudSyncShared.disable()
     }
 }

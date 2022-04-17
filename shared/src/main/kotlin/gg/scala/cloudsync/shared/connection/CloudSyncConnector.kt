@@ -160,9 +160,9 @@ object CloudSyncConnector
 
     fun usePendingUpdates(
         lambda: (ComponentAssetWrapper, File, String) -> Unit
-    )
+    ): CompletableFuture<Void>
     {
-        CompletableFuture.runAsync {
+        return CompletableFuture.runAsync {
             usePendingUpdatesSync(lambda)
         }
     }

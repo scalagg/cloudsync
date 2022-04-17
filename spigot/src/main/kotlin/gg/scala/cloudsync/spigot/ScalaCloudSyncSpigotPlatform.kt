@@ -22,19 +22,11 @@ object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
 
     override fun configureServices(shared: ScalaCloudSyncShared)
     {
-        val factory = ConfigFactory.newFactory(spigot)
-
         // bukkit file container
         shared.fileContainer = Bukkit.getWorldContainer()
 
         // configuration
-        shared.authentication = factory.fromFile(
-            "authentication", CloudSyncAuthenticationService
-                .ScalaConnectionAuthenticationWrapper::class.java
-        )
-        shared.discoverable = factory.fromFile(
-            "discoverable", CloudSyncDiscoveryService
-                .DiscoverableAssets::class.java
-        )
+        shared.authentication = spigot.config()
+        shared.discoverable = spigot.config()
     }
 }
