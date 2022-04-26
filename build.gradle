@@ -70,14 +70,6 @@ subprojects {
         exclude "**/*.kotlin_module"
         exclude "**/*.kotlin_builtins"
 
-        if (project.name != "shared") {
-            final String relocation =
-                    "gg.scala.cloudsync.${project.name}.shadow"
-
-            relocate "gg.scala.flavor", "${relocation}.flavor"
-            relocate "com.konghq", "${relocation}.unirest"
-        }
-
         exclude "META-INF/"
 
         archiveFileName = "cloudsync.jar"
