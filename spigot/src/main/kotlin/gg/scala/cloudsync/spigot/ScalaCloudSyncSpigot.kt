@@ -35,7 +35,7 @@ class ScalaCloudSyncSpigot : ExtendedScalaPlugin()
     override fun enable()
     {
         flavor {
-            bind<ScalaCloudSyncSpigot>() to this
+            bind<ScalaCloudSyncSpigot>() to this@ScalaCloudSyncSpigot
             inject(ScalaCloudSyncSpigotPlatform)
         }
 
