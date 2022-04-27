@@ -4,6 +4,8 @@ import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.annotations.container.ContainerDisable
+import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.config.annotations.ContainerConfig
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
@@ -20,9 +22,20 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("scala-commons")
     ]
 )
+@ContainerConfig(
+    value = "authentication",
+    model = CloudSyncAuthenticationService
+        .ScalaConnectionAuthenticationWrapper::class
+)
+@ContainerConfig(
+    value = "discoverable",
+    model = CloudSyncDiscoveryService
+        .DiscoverableAssets::class
+)
 class ScalaCloudSyncSpigot : ExtendedScalaPlugin()
 {
-    override fun enable()
+    @ContainerEnable
+    fun containerEnable()
     {
         flavor {
             bind<ScalaCloudSyncSpigot>() to this@ScalaCloudSyncSpigot
@@ -33,7 +46,8 @@ class ScalaCloudSyncSpigot : ExtendedScalaPlugin()
             .enable(ScalaCloudSyncSpigotPlatform)
     }
 
-    override fun disable()
+    @ContainerDisable
+    fun containerDisable()
     {
         ScalaCloudSyncShared.disable()
     }

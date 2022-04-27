@@ -25,21 +25,8 @@ object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
         // bukkit file container
         shared.fileContainer = Bukkit.getWorldContainer()
 
-        val factory = ConfigFactory
-            .newFactory(spigot)
-
         // configuration
-        shared.authentication =
-            factory.fromFile(
-                "authentication",
-                CloudSyncAuthenticationService
-                    .ScalaConnectionAuthenticationWrapper::class.java
-            )
-        shared.discoverable =
-            factory.fromFile(
-                "discoverable",
-                CloudSyncDiscoveryService
-                    .DiscoverableAssets::class.java
-            )
+        shared.authentication = spigot.config()
+        shared.discoverable = spigot.config()
     }
 }
