@@ -17,18 +17,8 @@ import me.lucko.helper.plugin.ap.PluginDependency
     apiVersion = "1.18",
     description = "Advanced server <-> cloud synchronization platform.",
     depends = [
-        PluginDependency("Cubed")
+        PluginDependency("scala-commons")
     ]
-)
-@ContainerConfig(
-    value = "authentication",
-    model = CloudSyncAuthenticationService
-        .ScalaConnectionAuthenticationWrapper::class
-)
-@ContainerConfig(
-    value = "discoverable",
-    model = CloudSyncDiscoveryService
-        .DiscoverableAssets::class
 )
 class ScalaCloudSyncSpigot : ExtendedScalaPlugin()
 {
