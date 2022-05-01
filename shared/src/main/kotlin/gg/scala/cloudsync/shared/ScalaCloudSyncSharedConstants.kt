@@ -6,6 +6,6 @@ package gg.scala.cloudsync.shared
  */
 object ScalaCloudSyncSharedConstants
 {
-    const val ARTIFACTORY_URL = "https://artifactory.scala.gg/"
+    const val ARTIFACTORY_URL = "https://artifactory.scala.gg"
     const val ARTIFACTORY_RELEASES = "gradle-release-local"
 }
