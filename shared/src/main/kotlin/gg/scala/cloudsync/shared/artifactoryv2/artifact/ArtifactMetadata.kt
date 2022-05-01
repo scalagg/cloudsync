@@ -9,21 +9,21 @@ import gg.scala.cloudsync.shared.artifactoryv2.artifact.component.ArtifactCompon
  */
 data class ArtifactMetadata(
     val path: String,
-    val children: List<ArtifactChild>
+    val children: List<ArtifactChild>?
 )
 {
     fun mostRecent() = children
-        .lastOrNull { it.folder }
+        ?.lastOrNull { it.folder }
 
     fun jar(): ArtifactComponentMetadata
     {
         val path = "$path${
-            this.children.first {
-                it.uri.endsWith(".jar")
-            }.uri
+            this.children!!
+                .first {
+                    it.uri.endsWith(".jar")
+                }
+                .uri
         }"
-
-        println(path)
 
         return JFrogArtifactory
             .findComponentMetadata(

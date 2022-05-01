@@ -26,12 +26,6 @@ object ScalaCloudSyncShared
         platform.getLogger()
     }
 
-    private val flavor by lazy {
-        Flavor.create<ScalaCloudSyncShared>(
-            FlavorOptions(platform.getLogger())
-        )
-    }
-
     fun reload()
     {
         platform.configureServices(this)
@@ -42,12 +36,12 @@ object ScalaCloudSyncShared
         this.platform = platform
         platform.configureServices(this)
 
-        flavor.bind<ScalaCloudSyncShared>() to this
-        flavor.startup()
+        platform.getInjector()
+            .bind<ScalaCloudSyncShared>() to this
     }
 
     fun disable()
     {
-        flavor.close()
+        platform.getInjector().close()
     }
 }

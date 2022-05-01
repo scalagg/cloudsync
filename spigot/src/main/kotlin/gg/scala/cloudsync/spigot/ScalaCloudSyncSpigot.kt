@@ -45,10 +45,4 @@ class ScalaCloudSyncSpigot : ExtendedScalaPlugin()
         ScalaCloudSyncShared
             .enable(ScalaCloudSyncSpigotPlatform)
     }
-
-    @ContainerDisable
-    fun containerDisable()
-    {
-        ScalaCloudSyncShared.disable()
-    }
 }

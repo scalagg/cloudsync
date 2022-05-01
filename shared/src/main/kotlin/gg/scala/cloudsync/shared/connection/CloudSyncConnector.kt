@@ -80,19 +80,21 @@ object CloudSyncConnector
     )
     {
         val assets = CloudSyncDiscoveryService
-            .discoverable.assets
+            .discoverable.assets.toList()
 
         for (component in assets)
         {
             val composite = component
                 .split(":")
 
-            val composted = "${
+            val composed = "${
                 composite[0].replace(".", "/")
             }/${composite[1]}"
 
+            println(composed)
+
             val metadata = JFrogArtifactory
-                .findMetadata(composted)
+                .findMetadata(composed)
 
             val mostRecent =
                 metadata.mostRecent()
@@ -100,7 +102,7 @@ object CloudSyncConnector
 
             val mostRecentMeta = JFrogArtifactory
                 .findMetadata(
-                    "$composted${mostRecent.uri}"
+                    "$composed${mostRecent.uri}"
                 )
 
             lambda.invoke(
@@ -134,10 +136,10 @@ object CloudSyncConnector
             // and avoid updating already up-to-date archives
             val md5Hash = Files
                 .asByteSource(file)
-                .hash(Hashing.md5())
+                .hash(Hashing.sha256())
                 .toString()
 
-            if (md5Hash != component.checksums.md5)
+            if (md5Hash != component.checksums.sha256)
             {
                 lambda.invoke(
                     component, file, fileToOverride

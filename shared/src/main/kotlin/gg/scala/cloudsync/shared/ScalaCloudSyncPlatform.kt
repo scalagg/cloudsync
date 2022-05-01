@@ -1,5 +1,6 @@
 package gg.scala.cloudsync.shared
 
+import gg.scala.flavor.Flavor
 import java.util.logging.Logger
 
 /**
@@ -9,5 +10,6 @@ import java.util.logging.Logger
 interface ScalaCloudSyncPlatform
 {
     fun getLogger(): Logger
+    fun getInjector(): Flavor
     fun configureServices(shared: ScalaCloudSyncShared)
 }

@@ -24,10 +24,6 @@ object JFrogArtifactory
             )
             .asString().body
 
-        println(
-            path
-        )
-
         return Serializers.gson
             .fromJson(
                 body, ArtifactComponentMetadata::class.java
@@ -45,11 +41,6 @@ object JFrogArtifactory
                 }/$path"
             )
             .asString().body
-
-        println()
-        println(path)
-        println(body)
-        println()
 
         return Serializers.gson
             .fromJson(

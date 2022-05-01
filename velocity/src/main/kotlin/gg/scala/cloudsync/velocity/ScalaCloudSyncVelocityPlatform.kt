@@ -5,6 +5,7 @@ import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.cloudsync.velocity.settings.VelocitySettingsProcessor
+import gg.scala.flavor.Flavor
 
 /**
  * @author GrowlyX
@@ -20,6 +21,8 @@ object ScalaCloudSyncVelocityPlatform : ScalaCloudSyncPlatform
 {
     override fun getLogger() =
         ScalaCloudSyncVelocity.INSTANCE.logger
+
+    override fun getInjector() = Flavor.create<ScalaCloudSyncShared>()
 
     override fun configureServices(shared: ScalaCloudSyncShared)
     {

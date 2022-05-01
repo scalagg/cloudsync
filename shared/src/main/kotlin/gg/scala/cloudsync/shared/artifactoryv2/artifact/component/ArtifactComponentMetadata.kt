@@ -12,10 +12,13 @@ data class ArtifactComponentMetadata(
     val checksums: ArtifactComponentChecksums,
 )
 {
-    val version by lazy {
+    val version = kotlin.run {
         val split = this.path
+            .removePrefix("/")
             .split("/")
 
-        split[split.size - 2]
+        println(split)
+
+        return@run split[split.size - 2]
     }
 }
