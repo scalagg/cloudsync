@@ -22,7 +22,7 @@ object JFrogArtifactory
                     "${ScalaCloudSyncSharedConstants.ARTIFACTORY_URL}/api/storage/${
                         ScalaCloudSyncSharedConstants.ARTIFACTORY_RELEASES
                     }/$path"
-                ).asJson().body.toString(),
+                ).asString().body,
                 ArtifactComponentMetadata::class.java
             )
     }
@@ -37,7 +37,7 @@ object JFrogArtifactory
                     "${ScalaCloudSyncSharedConstants.ARTIFACTORY_URL}/api/storage/${
                         ScalaCloudSyncSharedConstants.ARTIFACTORY_RELEASES
                     }/$path"
-                ).asJson().body.toString(),
+                ).asString().body,
                 ArtifactMetadata::class.java
             )
     }

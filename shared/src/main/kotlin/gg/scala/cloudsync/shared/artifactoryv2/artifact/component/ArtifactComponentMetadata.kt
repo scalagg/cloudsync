@@ -5,13 +5,11 @@ package gg.scala.cloudsync.shared.artifactoryv2.artifact.component
  * @since 5/1/2022
  */
 data class ArtifactComponentMetadata(
-    val size: Int,
     val path: String,
-    val checksums: ArtifactComponentChecksums,
-    val downloadUri: String,
-    val mimeType: String,
     val uri: String,
-    val originalChecksums: ArtifactComponentChecksums
+    val mimeType: String,
+    val downloadUri: String,
+    val checksums: ArtifactComponentChecksums,
 )
 {
     val version by lazy {

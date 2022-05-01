@@ -150,6 +150,11 @@ object CloudSyncConnector
     {
         return CompletableFuture.runAsync {
             usePendingUpdatesSync(lambda)
+        }.exceptionally {
+            ScalaCloudSyncShared.logger.log(
+                Level.WARNING, "Exception thrown during pending update task", it
+            )
+            return@exceptionally null
         }
     }
 
