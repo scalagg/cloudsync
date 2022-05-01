@@ -5,7 +5,6 @@ import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
 import java.io.File
-import java.util.logging.Logger
 
 /**
  * @author GrowlyX
@@ -29,7 +28,7 @@ object ScalaCloudSyncShared
 
     private val flavor by lazy {
         Flavor.create<ScalaCloudSyncShared>(
-            FlavorOptions(platform.getLogger(), "gg.scala.cloudsync.shared")
+            FlavorOptions(platform.getLogger())
         )
     }
 

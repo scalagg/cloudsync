@@ -3,19 +3,14 @@ package gg.scala.cloudsync.spigot.command
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.cloudsync.spigot.pagination.CloudSyncPaginatedResult
-import gg.scala.cloudsync.shared.repository.Repositories
-import gg.scala.cloudsync.shared.repository.component.ComponentWrapper
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
-import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -41,7 +36,7 @@ object CloudSyncCommand : ScalaCommand()
 
         CloudSyncConnector.usePendingUpdates { asset, _, name ->
             val fancyMessage = FancyMessage()
-            fancyMessage.withMessage("${CC.D_AQUA}$name${CC.YELLOW} is outdated! The newest version is: ${CC.GREEN}${asset.maven2!!.version}${CC.YELLOW}.")
+            fancyMessage.withMessage("${CC.D_AQUA}$name${CC.YELLOW} is outdated! The newest version is: ${CC.GREEN}${asset.version}${CC.YELLOW}.")
             fancyMessage.sendToPlayer(player)
         }
     }
@@ -55,41 +50,5 @@ object CloudSyncCommand : ScalaCommand()
                 .discoverable.assets,
             page ?: 1, "cloudsync tracked %s"
         )
-    }
-
-    @Subcommand("information")
-    @Description("View all information for a component.")
-    fun onInformation(
-        player: Player, @Single component: String,
-        @Single module: String
-    ): CompletableFuture<Void>
-    {
-        player.sendMessage("${CC.GREEN}Finding plugin versions...")
-
-        return Repositories.asyncComponents().thenAcceptAsync {
-            handleInternalInformation(player, it.items, component, module)
-        }
-    }
-
-    private fun handleInternalInformation(
-        player: Player, items: MutableList<ComponentWrapper>,
-        asset: String, module: String
-    )
-    {
-        val component = items.firstOrNull {
-            it.group.equals(asset, true) &&
-                    it.name.equals(module, true)
-        } ?: throw ConditionFailedException(
-            "There is no item with that group id. ${CC.D_RED}(ex. gg.scala.cloudsync & cloudsync)"
-        )
-
-        player.sendMessage("${CC.B_YELLOW}Viewing information for [$asset:$module]:")
-        player.sendMessage("${CC.YELLOW}Latest version: ${CC.AQUA}${component.version}")
-        player.sendMessage("")
-        player.sendMessage("${CC.B_YELLOW}Available Assets:")
-        player.sendMessage("${CC.WHITE}${
-            component.assets
-                .joinToString { it.maven2?.extension ?: "?" }
-        }.")
     }
 }

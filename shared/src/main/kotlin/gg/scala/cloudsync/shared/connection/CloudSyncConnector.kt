@@ -3,24 +3,21 @@ package gg.scala.cloudsync.shared.connection
 import com.google.common.hash.Hashing
 import com.google.common.io.Files
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
+import gg.scala.cloudsync.shared.artifactoryv2.JFrogArtifactory
+import gg.scala.cloudsync.shared.artifactoryv2.artifact.ArtifactMetadata
+import gg.scala.cloudsync.shared.artifactoryv2.artifact.component.ArtifactComponentMetadata
 import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
-import gg.scala.cloudsync.shared.repository.Repositories
-import gg.scala.cloudsync.shared.repository.component.ComponentWrapper
-import gg.scala.cloudsync.shared.repository.component.asset.ComponentAssetWrapper
-import gg.scala.cloudsync.shared.repository.repositories.ComponentPaginatedRepositoryWrapper
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import kong.unirest.GetRequest
 import kong.unirest.Unirest
-import kong.unirest.UnirestInstance
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.logging.Level
-import kotlin.properties.Delegates
 
 /**
  * @author GrowlyX
@@ -32,24 +29,18 @@ object CloudSyncConnector
     @Inject
     lateinit var shared: ScalaCloudSyncShared
 
-    private var unirest by Delegates
-        .notNull<UnirestInstance>()
-
     @Configure
     fun configure()
     {
-        unirest = Unirest.primaryInstance()
-
         usePendingUpdates { asset, _, name ->
-            shared.logger.warning("$name is outdated! Restart your server to update this plugin! (${asset.maven2?.version})")
+            shared.logger.warning("$name is outdated! Restart your server to update this plugin! (${asset.version})")
         }
     }
 
     @Close
     fun close()
     {
-        shared.reload()
-
+        this.shared.reload()
         applyPendingUpdates()
     }
 
@@ -57,15 +48,16 @@ object CloudSyncConnector
     {
         usePendingUpdatesSync { asset, file, name ->
             val start = System.currentTimeMillis()
-            shared.logger.info("Downloading the latest $name (v${asset.maven2?.version}) archive...")
+            shared.logger.info("Downloading the latest $name (v${asset.version}) archive...")
 
             try
             {
-                request(asset.downloadUrl).asObject {
-                    FileUtils.copyInputStreamToFile(
-                        it.content, file
-                    )
-                }
+                request(asset.downloadUri)
+                    .asObject {
+                        FileUtils.copyInputStreamToFile(
+                            it.content, file
+                        )
+                    }
 
                 shared.logger.warning(
                     "Successfully updated $name (took ${
@@ -84,53 +76,47 @@ object CloudSyncConnector
     }
 
     private fun useTrackedAssets(
-        components: ComponentPaginatedRepositoryWrapper? = null,
-        lambda: (String, ComponentAssetWrapper, ComponentWrapper) -> Unit
+        lambda: (String, ArtifactMetadata, ArtifactComponentMetadata) -> Unit
     )
     {
-        val request = components ?: Repositories.components()
-        val discovered = mutableListOf<String>()
-
-        for (component in request.items.asReversed())
+        for (
+        component in CloudSyncDiscoveryService
+            .discoverable.assets
+        )
         {
-            // Checks if this asset should be updated
-            val discoverable = CloudSyncDiscoveryService
-                .discoverable.assets
-                .firstOrNull {
-                    val split = it.split(":")
+            val composite = component
+                .split(":")
 
-                    split[0] == component.group &&
-                        split[1] == component.name
-                }
-                ?: continue
+            val composted = "${
+                composite[0].replace(".", "/")
+            }/${composite[1]}"
 
-            if (discovered.contains(discoverable))
-                continue
+            val metadata = JFrogArtifactory
+                .findMetadata(composted)
 
-            // Find the jar archive asset we need
-            val asset = component.assets
-                .firstOrNull {
-                    val maven2 = it.maven2
+            val mostRecent =
+                metadata.mostRecent()
+                    ?: continue
 
-                    maven2 != null &&
-                        maven2.extension == "jar"
-                }
-                ?: continue
+            val mostRecentMeta = JFrogArtifactory
+                .findMetadata(mostRecent.uri)
 
-            lambda.invoke(discoverable, asset, component)
-            discovered.add(discoverable)
+            lambda.invoke(
+                component, mostRecentMeta,
+                mostRecentMeta.jar()
+            )
         }
     }
 
     private fun usePendingUpdatesSync(
-        lambda: (ComponentAssetWrapper, File, String) -> Unit
+        lambda: (ArtifactComponentMetadata, File, String) -> Unit
     )
     {
         val pluginDirectory = File(
             shared.fileContainer, "plugins"
         )
 
-        useTrackedAssets { discoverable, asset, _ ->
+        useTrackedAssets { discoverable, _, component ->
             val fileToOverride = discoverable
                 .split(":")[2]
 
@@ -140,26 +126,26 @@ object CloudSyncConnector
                 .firstOrNull {
                     it.name.equals(jarFile, true)
                 }
+                ?: return@useTrackedAssets
 
-            if (file != null)
+            // checking if the hashes are the same, so we can save some time
+            // and avoid updating already up-to-date archives
+            val md5Hash = Files
+                .asByteSource(file)
+                .hash(Hashing.md5())
+                .toString()
+
+            if (md5Hash != component.checksums.md5)
             {
-                // checking if the hashes are the same, so we can save some time
-                // and avoid updating already up-to-date archives
-                val md5Hash = Files
-                    .asByteSource(file)
-                    .hash(Hashing.md5())
-                    .toString()
-
-                if (md5Hash != asset.checksum.md5)
-                {
-                    lambda.invoke(asset, file, fileToOverride)
-                }
+                lambda.invoke(
+                    component, file, fileToOverride
+                )
             }
         }
     }
 
     fun usePendingUpdates(
-        lambda: (ComponentAssetWrapper, File, String) -> Unit
+        lambda: (ArtifactComponentMetadata, File, String) -> Unit
     ): CompletableFuture<Void>
     {
         return CompletableFuture.runAsync {
@@ -172,7 +158,7 @@ object CloudSyncConnector
         val wrapper =
             CloudSyncAuthenticationService.getWrapper()
 
-        return unirest.get(request)
+        return Unirest.get(request)
             .basicAuth(wrapper.username, wrapper.password)
             .connectTimeout(1000)
     }

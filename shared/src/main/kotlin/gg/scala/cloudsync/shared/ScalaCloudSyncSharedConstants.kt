@@ -6,6 +6,6 @@ package gg.scala.cloudsync.shared
  */
 object ScalaCloudSyncSharedConstants
 {
-    @JvmStatic
-    val COMPONENTS = "https://repository.scala.gg/service/rest/v1/components?repository=maven-releases"
+    const val ARTIFACTORY_URL = "https://artifactory.scala.gg/"
+    const val ARTIFACTORY_RELEASES = "gradle-release-local"
 }

@@ -26,12 +26,12 @@ object CloudSyncListenerService : Listener
 
         CloudSyncConnector.usePendingUpdates { asset, _, name ->
             val fancyMessage = FancyMessage()
-            fancyMessage.withMessage("${CC.GREEN}[$name]${CC.YELLOW} I'm outdated! The newest version is: ${CC.GREEN}${asset.maven2!!.version}${CC.YELLOW}.")
+            fancyMessage.withMessage("${CC.GREEN}[Artifactory] ${CC.D_AQUA}[$name]${CC.YELLOW} I'm outdated! The newest version is: ${CC.GREEN}${asset.version}${CC.YELLOW}.")
             fancyMessage.sendToPlayer(event.player)
         }.thenRun {
             if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))
             {
-                event.player.sendMessage("${CC.RED}[This process took more than 5 seconds, is the repository alright?]")
+                event.player.sendMessage("${CC.RED}[This process took more than 5 seconds, is the artifactory alright?]")
             }
         }
     }
