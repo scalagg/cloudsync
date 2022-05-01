@@ -30,8 +30,7 @@ object CloudSyncAuthenticationService
     fun getWrapper() = authentication
 
     class ScalaConnectionAuthenticationWrapper(
-        val username: String = "admin",
-        val password: String = "password"
+        val accessToken: String = "token"
     ) : AbstractTypeSerializable
     {
         override fun getAbstractType() =

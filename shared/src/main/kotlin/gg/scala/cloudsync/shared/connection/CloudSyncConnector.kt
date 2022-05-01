@@ -159,7 +159,7 @@ object CloudSyncConnector
             CloudSyncAuthenticationService.getWrapper()
 
         return Unirest.get(request)
-            .basicAuth(wrapper.username, wrapper.password)
+            .header("Authorization", "Bearer ${wrapper.accessToken}")
             .connectTimeout(1000)
     }
 }
