@@ -15,7 +15,7 @@ data class ArtifactMetadata(
     fun mostRecent() = children
         ?.lastOrNull { it.folder }
 
-    fun jar(): ArtifactComponentMetadata
+    fun archive(): ArtifactComponentMetadata
     {
         val path = "$path${
             this.children!!

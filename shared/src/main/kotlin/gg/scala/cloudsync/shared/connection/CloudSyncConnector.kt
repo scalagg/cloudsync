@@ -91,8 +91,6 @@ object CloudSyncConnector
                 composite[0].replace(".", "/")
             }/${composite[1]}"
 
-            println(composed)
-
             val metadata = JFrogArtifactory
                 .findMetadata(composed)
 
@@ -100,14 +98,19 @@ object CloudSyncConnector
                 metadata.mostRecent()
                     ?: continue
 
+            val latestVersion = mostRecent.uri
+                .replace("/", "")
+
             val mostRecentMeta = JFrogArtifactory
                 .findMetadata(
                     "$composed${mostRecent.uri}"
                 )
 
+            val archive = mostRecentMeta.archive()
+            archive.version = latestVersion
+
             lambda.invoke(
-                component, mostRecentMeta,
-                mostRecentMeta.jar()
+                component, mostRecentMeta, archive
             )
         }
     }

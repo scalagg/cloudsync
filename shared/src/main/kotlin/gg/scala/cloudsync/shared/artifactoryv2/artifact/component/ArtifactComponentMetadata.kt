@@ -12,13 +12,5 @@ data class ArtifactComponentMetadata(
     val checksums: ArtifactComponentChecksums,
 )
 {
-    val version = kotlin.run {
-        val split = this.path
-            .removePrefix("/")
-            .split("/")
-
-        println(split)
-
-        return@run split[split.size - 2]
-    }
+    var version = "???"
 }
