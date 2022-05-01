@@ -1,6 +1,7 @@
 package gg.scala.cloudsync.shared.artifactoryv2.artifact
 
 import gg.scala.cloudsync.shared.artifactoryv2.JFrogArtifactory
+import gg.scala.cloudsync.shared.artifactoryv2.artifact.component.ArtifactComponentMetadata
 
 /**
  * @author GrowlyX
@@ -14,10 +15,19 @@ data class ArtifactMetadata(
     fun mostRecent() = children
         .lastOrNull { it.folder }
 
-    fun jar() = JFrogArtifactory
-        .findComponentMetadata(
+    fun jar(): ArtifactComponentMetadata
+    {
+        val path = "$path${
             this.children.first {
                 it.uri.endsWith(".jar")
             }.uri
-        )
+        }"
+
+        println(path)
+
+        return JFrogArtifactory
+            .findComponentMetadata(
+                path
+            )
+    }
 }

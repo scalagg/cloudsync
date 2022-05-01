@@ -16,20 +16,27 @@ object JFrogArtifactory
         path: String
     ): ArtifactComponentMetadata
     {
+        val body = CloudSyncConnector
+            .request(
+                "${ScalaCloudSyncSharedConstants.ARTIFACTORY_URL}/artifactory/api/storage/${
+                    ScalaCloudSyncSharedConstants.ARTIFACTORY_RELEASES
+                }/$path"
+            )
+            .asString().body
+
+        println(
+            path
+        )
+
         return Serializers.gson
             .fromJson(
-                CloudSyncConnector.request(
-                    "${ScalaCloudSyncSharedConstants.ARTIFACTORY_URL}/artifactory/api/storage/${
-                        ScalaCloudSyncSharedConstants.ARTIFACTORY_RELEASES
-                    }/$path"
-                ).asString().body,
-                ArtifactComponentMetadata::class.java
+                body, ArtifactComponentMetadata::class.java
             )
     }
 
     fun findMetadata(
         path: String
-    ): ArtifactMetadata
+    ):  ArtifactMetadata
     {
         val body = CloudSyncConnector
             .request(
@@ -38,6 +45,11 @@ object JFrogArtifactory
                 }/$path"
             )
             .asString().body
+
+        println()
+        println(path)
+        println(body)
+        println()
 
         return Serializers.gson
             .fromJson(

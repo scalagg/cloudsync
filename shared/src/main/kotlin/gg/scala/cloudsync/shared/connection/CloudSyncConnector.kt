@@ -79,10 +79,10 @@ object CloudSyncConnector
         lambda: (String, ArtifactMetadata, ArtifactComponentMetadata) -> Unit
     )
     {
-        for (
-        component in CloudSyncDiscoveryService
+        val assets = CloudSyncDiscoveryService
             .discoverable.assets
-        )
+
+        for (component in assets)
         {
             val composite = component
                 .split(":")
@@ -99,7 +99,9 @@ object CloudSyncConnector
                     ?: continue
 
             val mostRecentMeta = JFrogArtifactory
-                .findMetadata(mostRecent.uri)
+                .findMetadata(
+                    "$composted${mostRecent.uri}"
+                )
 
             lambda.invoke(
                 component, mostRecentMeta,
