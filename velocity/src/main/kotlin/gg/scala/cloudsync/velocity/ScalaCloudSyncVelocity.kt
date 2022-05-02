@@ -38,7 +38,8 @@ constructor(
     companion object
     {
         @JvmStatic
-        var INSTANCE by Delegates.notNull<ScalaCloudSyncVelocity>()
+        var INSTANCE by Delegates
+            .notNull<ScalaCloudSyncVelocity>()
     }
 
     init

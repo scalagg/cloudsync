@@ -3,6 +3,7 @@ package gg.scala.cloudsync.spigot.services
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import gg.scala.commons.annotations.Listeners
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -26,7 +27,7 @@ object CloudSyncListenerService : Listener
 
         CloudSyncConnector.usePendingUpdates { asset, _, name ->
             val fancyMessage = FancyMessage()
-            fancyMessage.withMessage("${CC.GREEN}[JFrog] ${CC.D_AQUA}$name ${CC.YELLOW} is outdated! The newest version is: ${CC.GREEN}${asset.version}${CC.YELLOW}.")
+            fancyMessage.withMessage("${CC.GREEN}${CC.BOLD}JFrog ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT}${CC.YELLOW} A new version of ${CC.D_AQUA}$name${CC.YELLOW} is available: ${CC.GREEN}${asset.version}${CC.YELLOW}.")
             fancyMessage.sendToPlayer(event.player)
         }.thenRun {
             if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))
