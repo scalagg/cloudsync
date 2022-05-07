@@ -5,8 +5,8 @@ import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.cloudsync.spigot.pagination.CloudSyncPaginatedResult
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import net.evilblock.cubed.acf.CommandHelp
-import net.evilblock.cubed.acf.annotation.*
+import gg.scala.commons.acf.CommandHelp
+import gg.scala.commons.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.command.CommandSender

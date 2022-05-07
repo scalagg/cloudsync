@@ -29,7 +29,7 @@ object CloudSyncDiscoveryService
 
     class DiscoverableAssets(
         val assets: MutableList<String> = mutableListOf(
-            "net.evilblock.cubed:bukkit:cubed-bukkit",
+            "gg.scala.commons:bukkit:sccommons-bukkit"
         )
     ) : AbstractTypeSerializable
     {

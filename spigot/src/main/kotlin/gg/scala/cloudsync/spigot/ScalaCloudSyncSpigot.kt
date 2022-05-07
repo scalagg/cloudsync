@@ -4,7 +4,6 @@ import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
-import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.config.annotations.ContainerConfig
 import me.lucko.helper.plugin.ap.Plugin
