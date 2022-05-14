@@ -34,10 +34,19 @@ object CloudSyncCommand : ScalaCommand()
     {
         player.sendMessage("${CC.GREEN}Finding pending plugin updates...")
 
+        var iterated = 0
+
         CloudSyncConnector.usePendingUpdates { asset, _, name ->
             val fancyMessage = FancyMessage()
             fancyMessage.withMessage("${CC.D_AQUA}$name${CC.YELLOW} is outdated! The newest version is: ${CC.GREEN}${asset.version}${CC.YELLOW}.")
             fancyMessage.sendToPlayer(player)
+
+            iterated++
+        }.thenRun {
+            if (iterated == 0)
+            {
+                player.sendMessage("No updates are pending.")
+            }
         }
     }
 
