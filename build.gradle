@@ -6,6 +6,19 @@ plugins {
     id "org.jetbrains.kotlin.kapt" version "1.6.20"
 }
 
+String environmental(String key)
+{
+    final String environment =
+        System.getenv(key)
+
+    if (environment != null)
+    {
+        return environment
+    }
+
+    return project.property(key)
+}
+
 allprojects {
     group "gg.scala.cloudsync"
     version "1.0.1"
@@ -16,10 +29,10 @@ allprojects {
         mavenCentral()
 
         maven {
-            url "${artifactory_contextUrl}/gradle-release"
+            url "${environmental("artifactory_contextUrl")}/gradle-release"
             credentials {
-                username "${artifactory_user}"
-                password "${artifactory_password}"
+                username environmental("artifactory_user")
+                password environmental("artifactory_password")
             }
         }
 
@@ -76,10 +89,11 @@ subprojects {
         repositories {
             maven {
                 name "scala"
-                url "${artifactory_contextUrl}/${artifactory_release}"
+                url "${environmental("artifactory_contextUrl")}/gradle-release"
+
                 credentials {
-                    username "${artifactory_user}"
-                    password "${artifactory_password}"
+                    username environmental("artifactory_user")
+                    password environmental("artifactory_password")
                 }
             }
         }
@@ -92,13 +106,13 @@ subprojects {
 }
 
 artifactory {
-    this.contextUrl = "${artifactory_contextUrl}"
+    this.contextUrl = environmental("artifactory_contextUrl")
 
     publish {
         repository {
-            repoKey = "${artifactory_release_local}"
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            repoKey = environmental("artifactory_release_local")
+            username = environmental("artifactory_user")
+            password = environmental("artifactory_password")
             maven = true
         }
     }
