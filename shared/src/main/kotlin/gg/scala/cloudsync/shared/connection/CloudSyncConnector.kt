@@ -139,10 +139,10 @@ object CloudSyncConnector
             // and avoid updating already up-to-date archives
             val md5Hash = Files
                 .asByteSource(file)
-                .hash(Hashing.sha256())
+                .hash(Hashing.md5())
                 .toString()
 
-            if (md5Hash != component.checksums.sha256)
+            if (md5Hash != component.checksums.md5)
             {
                 lambda.invoke(
                     component, file, fileToOverride
