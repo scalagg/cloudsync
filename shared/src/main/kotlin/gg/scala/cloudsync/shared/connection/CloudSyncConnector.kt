@@ -172,7 +172,7 @@ object CloudSyncConnector
             CloudSyncAuthenticationService.getWrapper()
 
         return Unirest.get(request)
-            .header("Authorization", "Bearer ${wrapper.accessToken}")
+            .header("X-JFrog-Art-Api", wrapper.apiKey)
             .connectTimeout(1000)
     }
 }

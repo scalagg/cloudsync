@@ -5,7 +5,6 @@ import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
-import java.lang.reflect.Type
 import kotlin.properties.Delegates
 
 /**
@@ -30,7 +29,7 @@ object CloudSyncAuthenticationService
     fun getWrapper() = authentication
 
     class ScalaConnectionAuthenticationWrapper(
-        val accessToken: String = "token"
+        val apiKey: String = "token"
     ) : AbstractTypeSerializable
     {
         override fun getAbstractType() =
