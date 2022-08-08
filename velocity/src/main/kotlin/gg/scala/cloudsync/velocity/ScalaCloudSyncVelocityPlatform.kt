@@ -35,6 +35,8 @@ object ScalaCloudSyncVelocityPlatform : ScalaCloudSyncPlatform
             }
 
             data class Discoverable(
+                val discoveryUrl: String = "https://artifactory.scala.gg",
+                val discoveryRepositories: List<String> = listOf("gradle-release-local"),
                 val discoverable: List<String> =
                     mutableListOf("xyz:xyz:xyz")
             ) : VelocitySettingsModel()
@@ -62,7 +64,11 @@ object ScalaCloudSyncVelocityPlatform : ScalaCloudSyncPlatform
             shared.discoverable =
                 VelocitySettingsProcessor.locate<Discoverable>()!!
                     .let {
-                        CloudSyncDiscoveryService.DiscoverableAssets(it.discoverable.toMutableList())
+                        CloudSyncDiscoveryService.DiscoverableAssets(
+                            it.discoveryUrl,
+                            it.discoveryRepositories,
+                            it.discoverable.toMutableList(),
+                        )
                     }
         }
     }
