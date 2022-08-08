@@ -2,8 +2,6 @@ package gg.scala.cloudsync.shared
 
 import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
-import gg.scala.flavor.Flavor
-import gg.scala.flavor.FlavorOptions
 import java.io.File
 
 /**

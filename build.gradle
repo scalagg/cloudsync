@@ -48,7 +48,7 @@ subprojects {
         compileOnly "com.google.guava:guava:31.0.1-jre"
         compileOnly "commons-io:commons-io:2.11.0"
 
-        compileOnly "gg.scala.commons:serializers:2.0.0"
+        compileOnly "gg.scala.commons:serializers:2.0.8"
     }
 
     compileKotlin {

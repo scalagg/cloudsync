@@ -1,9 +1,9 @@
 package gg.scala.cloudsync.shared.artifactory
 
-import gg.scala.cloudsync.shared.ScalaCloudSyncSharedConstants
 import gg.scala.cloudsync.shared.artifactory.artifact.ArtifactMetadata
 import gg.scala.cloudsync.shared.artifactory.artifact.component.ArtifactComponentMetadata
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
+import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import net.evilblock.cubed.serializers.Serializers
 
 /**
@@ -13,13 +13,15 @@ import net.evilblock.cubed.serializers.Serializers
 object JFrogArtifactory
 {
     fun findComponentMetadata(
-        path: String
+        path: String, repositoryOverride: String? = null
     ): ArtifactComponentMetadata
     {
+        val assets = CloudSyncDiscoveryService.discoverable
+
         val body = CloudSyncConnector
             .request(
-                "${ScalaCloudSyncSharedConstants.ARTIFACTORY_URL}/artifactory/api/storage/${
-                    ScalaCloudSyncSharedConstants.ARTIFACTORY_RELEASES
+                "${assets.discoveryUrl}/artifactory/api/storage/${
+                    repositoryOverride ?: assets.discoveryRepositories.first()
                 }/$path"
             )
             .asString().body
@@ -31,13 +33,15 @@ object JFrogArtifactory
     }
 
     fun findMetadata(
-        path: String
+        path: String, repositoryOverride: String? = null
     ):  ArtifactMetadata
     {
+        val assets = CloudSyncDiscoveryService.discoverable
+
         val body = CloudSyncConnector
             .request(
-                "${ScalaCloudSyncSharedConstants.ARTIFACTORY_URL}/artifactory/api/storage/${
-                    ScalaCloudSyncSharedConstants.ARTIFACTORY_RELEASES
+                "${assets.discoveryUrl}/artifactory/api/storage/${
+                    repositoryOverride ?: assets.discoveryRepositories.first()
                 }/$path"
             )
             .asString().body

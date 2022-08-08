@@ -82,7 +82,6 @@ object CloudSyncConnector
         val assets = CloudSyncDiscoveryService
             .discoverable.assets.toList()
 
-
         for (component in assets)
         {
             val composite = component
