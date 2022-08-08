@@ -57,12 +57,31 @@ constructor(
     @Subscribe
     fun onInitialize(event: ProxyInitializeEvent)
     {
-        ScalaCloudSyncShared.enable(ScalaCloudSyncVelocityPlatform)
+        contextual<ScalaCloudSyncShared> {
+            ScalaCloudSyncShared.enable(ScalaCloudSyncVelocityPlatform)
+        }
     }
 
     @Subscribe
     fun onInitialize(event: ProxyShutdownEvent)
     {
-        ScalaCloudSyncShared.disable()
+        contextual<ScalaCloudSyncShared> {
+            ScalaCloudSyncShared.disable()
+        }
     }
+}
+
+inline fun <reified T> contextual(
+    noinline lambda: () -> Unit
+)
+{
+    val classLoader = Thread.currentThread().contextClassLoader
+    Thread.currentThread().contextClassLoader = T::class.java.classLoader
+
+    runCatching(lambda)
+        .onFailure {
+            it.printStackTrace()
+        }
+
+    Thread.currentThread().contextClassLoader = classLoader
 }

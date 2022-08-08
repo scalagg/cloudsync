@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
  */
 object VelocitySettingsProcessor
 {
-    val settings = mutableMapOf<KClass<*>, AbstractTypeSerializable>()
+    val settings = mutableMapOf<KClass<*>, VelocitySettingsModel>()
 
     fun initialLoad()
     {
@@ -22,7 +22,7 @@ object VelocitySettingsProcessor
             it.setPrettyPrinting()
             it.registerTypeAdapter(
                 VelocitySettingsModel::class.java,
-                AbstractTypeSerializer<AbstractTypeSerializable>()
+                AbstractTypeSerializer<VelocitySettingsModel>()
             )
         }
 
@@ -35,7 +35,7 @@ object VelocitySettingsProcessor
         return settings[T::class] as T
     }
 
-    inline fun <reified T : AbstractTypeSerializable> loadSettings(id: String)
+    inline fun <reified T : VelocitySettingsModel> loadSettings(id: String)
     {
         saveSettingsToFile(T::class, id)
 
