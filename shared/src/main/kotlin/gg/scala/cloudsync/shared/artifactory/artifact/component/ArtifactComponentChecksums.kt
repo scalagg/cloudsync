@@ -1,4 +1,4 @@
-package gg.scala.cloudsync.shared.artifactoryv2.artifact.component
+package gg.scala.cloudsync.shared.artifactory.artifact.component
 
 /**
  * @author GrowlyX

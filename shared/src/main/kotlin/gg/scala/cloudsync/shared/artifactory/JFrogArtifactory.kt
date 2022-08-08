@@ -1,8 +1,8 @@
-package gg.scala.cloudsync.shared.artifactoryv2
+package gg.scala.cloudsync.shared.artifactory
 
 import gg.scala.cloudsync.shared.ScalaCloudSyncSharedConstants
-import gg.scala.cloudsync.shared.artifactoryv2.artifact.ArtifactMetadata
-import gg.scala.cloudsync.shared.artifactoryv2.artifact.component.ArtifactComponentMetadata
+import gg.scala.cloudsync.shared.artifactory.artifact.ArtifactMetadata
+import gg.scala.cloudsync.shared.artifactory.artifact.component.ArtifactComponentMetadata
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import net.evilblock.cubed.serializers.Serializers
 

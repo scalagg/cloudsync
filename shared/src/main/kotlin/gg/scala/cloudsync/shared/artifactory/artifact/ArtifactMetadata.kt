@@ -1,7 +1,7 @@
-package gg.scala.cloudsync.shared.artifactoryv2.artifact
+package gg.scala.cloudsync.shared.artifactory.artifact
 
-import gg.scala.cloudsync.shared.artifactoryv2.JFrogArtifactory
-import gg.scala.cloudsync.shared.artifactoryv2.artifact.component.ArtifactComponentMetadata
+import gg.scala.cloudsync.shared.artifactory.JFrogArtifactory
+import gg.scala.cloudsync.shared.artifactory.artifact.component.ArtifactComponentMetadata
 
 /**
  * @author GrowlyX
