@@ -103,7 +103,8 @@ object CloudSyncConnector
 
             val mostRecentMeta = JFrogArtifactory
                 .findMetadata(
-                    "$composed${mostRecent.uri}"
+                    "$composed${mostRecent.uri}",
+                    composite.getOrNull(3)
                 )
 
             val archive = mostRecentMeta.archive()

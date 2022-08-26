@@ -27,7 +27,7 @@ object CloudSyncListenerService : Listener
 
         CloudSyncConnector.usePendingUpdates { asset, _, name ->
             val fancyMessage = FancyMessage()
-            fancyMessage.withMessage("${CC.GREEN}${CC.BOLD}JFrog ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT}${CC.YELLOW} A new version of ${CC.D_AQUA}$name${CC.YELLOW} is available: ${CC.GREEN}${asset.version}${CC.YELLOW}.")
+            fancyMessage.withMessage("${CC.GREEN}${CC.BOLD}Artifactory ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT}${CC.YELLOW} A new version of ${CC.D_AQUA}$name${CC.YELLOW} is available: ${CC.GREEN}${asset.version}${CC.YELLOW}.")
             fancyMessage.sendToPlayer(event.player)
         }.thenRun {
             if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))

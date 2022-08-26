@@ -3,7 +3,7 @@ dependencies {
     kapt "me.lucko:helper:5.6.10.2"
 
     compileOnly "gg.scala.spigot:server:1.1.0"
-    compileOnly "gg.scala.commons:bukkit:2.0.8"
+    compileOnly "gg.scala.commons:bukkit:2.1.0"
 
     implementation "com.konghq:unirest-java:3.13.8:standalone"
 }
