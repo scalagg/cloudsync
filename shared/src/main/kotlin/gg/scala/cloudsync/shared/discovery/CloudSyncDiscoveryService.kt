@@ -22,6 +22,7 @@ object CloudSyncDiscoveryService
     fun configure()
     {
         discoverable = ScalaCloudSyncShared.discoverable
+        discoverable.assets += "gg.scala.cloudsync:spigot:cloudsync"
     }
 
     class DiscoverableAssets(

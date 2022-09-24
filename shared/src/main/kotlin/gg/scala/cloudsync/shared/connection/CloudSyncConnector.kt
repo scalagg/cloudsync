@@ -165,8 +165,7 @@ object CloudSyncConnector
 
     fun request(request: String): GetRequest
     {
-        val wrapper =
-            CloudSyncAuthenticationService.getWrapper()
+        val wrapper = CloudSyncAuthenticationService.getWrapper()
 
         return Unirest.get(request)
             .header("X-JFrog-Art-Api", wrapper.apiKey)
