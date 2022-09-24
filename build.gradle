@@ -42,7 +42,7 @@ subprojects {
             implementation project(":shared")
         }
 
-        compileOnly "gg.scala.flavor:flavor:0.1.3.7"
+        compileOnly "gg.scala.flavor:flavor:0.1.6"
         compileOnly "com.konghq:unirest-java:3.13.6:standalone"
 
         compileOnly "com.google.guava:guava:31.0.1-jre"

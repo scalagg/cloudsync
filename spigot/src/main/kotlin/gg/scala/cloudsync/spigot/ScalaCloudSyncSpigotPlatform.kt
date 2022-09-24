@@ -4,6 +4,7 @@ import gg.scala.cloudsync.shared.ScalaCloudSyncPlatform
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.flavor.inject.Inject
 import org.bukkit.Bukkit
+import java.io.File
 
 /**
  * @author GrowlyX
@@ -20,7 +21,9 @@ object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
     override fun configureServices(shared: ScalaCloudSyncShared)
     {
         // bukkit file container
-        shared.fileContainer = Bukkit.getWorldContainer()
+        shared.pluginContainer = File(
+            Bukkit.getWorldContainer(), "plugins"
+        )
 
         // configuration
         shared.authentication = spigot.config()

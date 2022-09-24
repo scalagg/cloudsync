@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
+import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import java.io.File
 import java.nio.file.Path
 import java.util.logging.Logger
@@ -29,7 +30,6 @@ import kotlin.properties.Delegates
 class ScalaCloudSyncVelocity
 @Inject
 constructor(
-    val server: ProxyServer,
     val logger: Logger,
     @DataDirectory
     private val directory: Path
@@ -63,11 +63,9 @@ constructor(
     }
 
     @Subscribe
-    fun onInitialize(event: ProxyShutdownEvent)
+    fun onShutdown(event: ProxyShutdownEvent)
     {
-        contextual<ScalaCloudSyncShared> {
-            ScalaCloudSyncShared.disable()
-        }
+        CloudSyncConnector.close()
     }
 }
 

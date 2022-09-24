@@ -14,16 +14,12 @@ import kotlin.properties.Delegates
 @Service(priority = 50)
 object CloudSyncAuthenticationService
 {
-    @Inject
-    lateinit var shared: ScalaCloudSyncShared
-
-    private var authentication by Delegates
-        .notNull<ScalaConnectionAuthenticationWrapper>()
+    lateinit var authentication: ScalaConnectionAuthenticationWrapper
 
     @Configure
     fun configure()
     {
-        authentication = shared.authentication
+        authentication = ScalaCloudSyncShared.authentication
     }
 
     fun getWrapper() = authentication

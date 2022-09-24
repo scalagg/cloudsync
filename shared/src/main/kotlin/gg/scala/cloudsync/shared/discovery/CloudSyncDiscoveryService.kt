@@ -15,16 +15,13 @@ import kotlin.properties.Delegates
 @Service(priority = 45)
 object CloudSyncDiscoveryService
 {
-    @Inject
-    lateinit var shared: ScalaCloudSyncShared
-
     var discoverable by Delegates
         .notNull<DiscoverableAssets>()
 
     @Configure
     fun configure()
     {
-        discoverable = shared.discoverable
+        discoverable = ScalaCloudSyncShared.discoverable
     }
 
     class DiscoverableAssets(

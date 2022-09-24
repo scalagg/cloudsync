@@ -10,7 +10,7 @@ import java.io.File
  */
 object ScalaCloudSyncShared
 {
-    lateinit var fileContainer: File
+    lateinit var pluginContainer: File
 
     lateinit var authentication: CloudSyncAuthenticationService
         .ScalaConnectionAuthenticationWrapper

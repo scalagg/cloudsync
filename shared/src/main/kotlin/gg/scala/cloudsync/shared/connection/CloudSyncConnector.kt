@@ -26,21 +26,18 @@ import java.util.logging.Level
 @Service(priority = 40)
 object CloudSyncConnector
 {
-    @Inject
-    lateinit var shared: ScalaCloudSyncShared
-
     @Configure
     fun configure()
     {
         usePendingUpdates { asset, _, name ->
-            shared.logger.warning("$name is outdated! Restart your server to update this plugin! (${asset.version})")
+            ScalaCloudSyncShared.logger.warning("$name is outdated! Restart your server to update this plugin! (${asset.version})")
         }
     }
 
     @Close
     fun close()
     {
-        this.shared.reload()
+        ScalaCloudSyncShared.reload()
         applyPendingUpdates()
     }
 
@@ -48,7 +45,7 @@ object CloudSyncConnector
     {
         usePendingUpdatesSync { asset, file, name ->
             val start = System.currentTimeMillis()
-            shared.logger.info("Downloading the latest $name (v${asset.version}) archive...")
+            ScalaCloudSyncShared.logger.info("Downloading the latest $name (v${asset.version}) archive...")
 
             try
             {
@@ -59,14 +56,14 @@ object CloudSyncConnector
                         )
                     }
 
-                shared.logger.warning(
+                ScalaCloudSyncShared.logger.warning(
                     "Successfully updated $name (took ${
                         System.currentTimeMillis() - start
                     }ms)!"
                 )
             } catch (exception: Exception)
             {
-                shared.logger.log(
+                ScalaCloudSyncShared.logger.log(
                     Level.SEVERE,
                     "Oops, seems like an exception was thrown during the update process.",
                     exception
@@ -81,6 +78,7 @@ object CloudSyncConnector
     {
         val assets = CloudSyncDiscoveryService
             .discoverable.assets.toList()
+
 
         for (component in assets)
         {
@@ -120,17 +118,14 @@ object CloudSyncConnector
         lambda: (ArtifactComponentMetadata, File, String) -> Unit
     )
     {
-        val pluginDirectory = File(
-            shared.fileContainer, "plugins"
-        )
-
         useTrackedAssets { discoverable, _, component ->
             val fileToOverride = discoverable
                 .split(":")[2]
 
             val jarFile = "$fileToOverride.jar"
 
-            val file = pluginDirectory.listFiles()!!
+            val file = ScalaCloudSyncShared.pluginContainer
+                .listFiles()!!
                 .firstOrNull {
                     it.name.equals(jarFile, true)
                 }
@@ -140,10 +135,10 @@ object CloudSyncConnector
             // and avoid updating already up-to-date archives
             val md5Hash = Files
                 .asByteSource(file)
-                .hash(Hashing.md5())
+                .hash(Hashing.sha256())
                 .toString()
 
-            if (md5Hash != component.checksums.md5)
+            if (md5Hash != component.checksums.sha256)
             {
                 lambda.invoke(
                     component, file, fileToOverride
@@ -156,14 +151,16 @@ object CloudSyncConnector
         lambda: (ArtifactComponentMetadata, File, String) -> Unit
     ): CompletableFuture<Void>
     {
-        return CompletableFuture.runAsync {
-            usePendingUpdatesSync(lambda)
-        }.exceptionally {
-            ScalaCloudSyncShared.logger.log(
-                Level.WARNING, "Exception thrown during pending update task", it
-            )
-            return@exceptionally null
-        }
+        return CompletableFuture
+            .runAsync {
+                usePendingUpdatesSync(lambda)
+            }
+            .exceptionally {
+                ScalaCloudSyncShared.logger.log(
+                    Level.WARNING, "Exception thrown during pending update task", it
+                )
+                return@exceptionally null
+            }
     }
 
     fun request(request: String): GetRequest
