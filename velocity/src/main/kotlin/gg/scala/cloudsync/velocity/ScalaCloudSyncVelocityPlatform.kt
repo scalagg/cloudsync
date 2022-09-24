@@ -67,7 +67,10 @@ object ScalaCloudSyncVelocityPlatform : ScalaCloudSyncPlatform
                         CloudSyncDiscoveryService.DiscoverableAssets(
                             it.discoveryUrl,
                             it.discoveryRepositories,
-                            it.discoverable.toMutableList(),
+                            it.discoverable.toMutableList()
+                                .apply {
+                                    this += "gg.scala.cloudsync:velocity:cloudsync"
+                                }
                         )
                     }
 

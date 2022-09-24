@@ -2,6 +2,7 @@ package gg.scala.cloudsync.spigot
 
 import gg.scala.cloudsync.shared.ScalaCloudSyncPlatform
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
+import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.flavor.inject.Inject
 import org.bukkit.Bukkit
 import java.io.File
@@ -27,6 +28,9 @@ object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
 
         // configuration
         shared.authentication = spigot.config()
-        shared.discoverable = spigot.config()
+        shared.discoverable = spigot.config<CloudSyncDiscoveryService.DiscoverableAssets>()
+            .apply {
+                assets += "gg.scala.cloudsync:spigot:cloudsync"
+            }
     }
 }
