@@ -2,9 +2,11 @@ package gg.scala.cloudsync.spigot.services
 
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import gg.scala.commons.annotations.Listeners
+import gg.scala.flavor.inject.Inject
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
-import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -17,22 +19,29 @@ import java.util.concurrent.TimeUnit
 @Listeners
 object CloudSyncListenerService : Listener
 {
+    @Inject
+    lateinit var audiences: BukkitAudiences
+
     @EventHandler
     fun onJoin(event: PlayerJoinEvent)
     {
-        if (!event.player.isOp)
-            return
+        if (event.player.hasPermission("cloudsync.login.notifications"))
+        {
+            val start = System.currentTimeMillis()
 
-        val start = System.currentTimeMillis()
-
-        CloudSyncConnector.usePendingUpdates { asset, _, name ->
-            val fancyMessage = FancyMessage()
-            fancyMessage.withMessage("${CC.B_GREEN}Artifactory ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT}${CC.SEC} A new version of ${CC.PRI}$name${CC.SEC} is available: ${CC.PRI}${asset.version}${CC.SEC}.")
-            fancyMessage.sendToPlayer(event.player)
-        }.thenRun {
-            if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))
-            {
-                event.player.sendMessage("${CC.RED}[This process took more than 5 seconds, is the artifactory alright?]")
+            CloudSyncConnector.usePendingUpdates { asset, _, name ->
+                audiences.player(event.player)
+                    .sendMessage(
+                        LegacyComponentSerializer.legacySection()
+                            .deserialize(
+                                "${CC.B_GREEN}Artifactory ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT}${CC.SEC} A new version of ${CC.PRI}$name${CC.SEC} is available: ${CC.PRI}${asset.version}${CC.SEC}."
+                            )
+                    )
+            }.thenRun {
+                if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))
+                {
+                    event.player.sendMessage("${CC.RED}[This process took more than 5 seconds, is the artifactory alright?]")
+                }
             }
         }
     }
