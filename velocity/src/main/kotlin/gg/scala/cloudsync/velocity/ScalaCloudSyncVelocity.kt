@@ -79,7 +79,7 @@ constructor(
                 event.player.sendMessage(
                     LegacyComponentSerializer.legacyAmpersand()
                         .deserialize(
-                            "&d&lArtifactory &7&l» &3A new version of &b$name&e is available: &b${asset.version}&3."
+                            "&6&lArtifactory &7&l» &3A new version of &b$name&3 is available: &b${asset.version}&3."
                         )
                 )
             }.thenRun {
