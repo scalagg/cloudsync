@@ -3,6 +3,7 @@ package gg.scala.cloudsync.velocity
 import com.google.inject.Inject
 import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.player.ServerConnectedEvent
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.Plugin
@@ -10,8 +11,10 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.io.File
 import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 import kotlin.properties.Delegates
 
@@ -59,6 +62,37 @@ constructor(
     {
         contextual<ScalaCloudSyncShared> {
             ScalaCloudSyncShared.enable(ScalaCloudSyncVelocityPlatform)
+        }
+    }
+
+    @Subscribe(order = PostOrder.LATE)
+    fun onLogin(event: ServerConnectedEvent)
+    {
+        if (
+            !event.previousServer.isPresent &&
+            event.player.hasPermission("cloudsync.login.notifications")
+        )
+        {
+            val start = System.currentTimeMillis()
+
+            CloudSyncConnector.usePendingUpdates { asset, _, name ->
+                event.player.sendMessage(
+                    LegacyComponentSerializer.legacyAmpersand()
+                        .deserialize(
+                            "&d&lArtifactory &7&l» &3A new version of &b$name&e is available: &b${asset.version}&3."
+                        )
+                )
+            }.thenRun {
+                if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))
+                {
+                    event.player.sendMessage(
+                        LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(
+                                "&c[This process took more than 5 seconds, is the artifactory alright?]"
+                            )
+                    )
+                }
+            }
         }
     }
 
