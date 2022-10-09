@@ -31,6 +31,7 @@ object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
         shared.discoverable = spigot.config<CloudSyncDiscoveryService.DiscoverableAssets>()
             .apply {
                 assets += "gg.scala.cloudsync:spigot:cloudsync"
+                assets += "gg.scala.store:spigot:store-spigot"
             }
     }
 }
