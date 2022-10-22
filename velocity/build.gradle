@@ -9,8 +9,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.velocitypowered:velocity-api:3.0.1"
-    kapt "com.velocitypowered:velocity-api:3.0.1"
+    compileOnly "com.velocitypowered:velocity-api:3.1.0"
+    kapt "com.velocitypowered:velocity-api:3.1.0"
 
     implementation "gg.scala.commons:velocity:3.0.2"
     implementation "commons-io:commons-io:2.11.0"
