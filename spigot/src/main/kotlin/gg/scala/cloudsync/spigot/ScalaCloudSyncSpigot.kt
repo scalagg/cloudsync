@@ -6,8 +6,11 @@ import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.config.annotations.ContainerConfig
-import me.lucko.helper.plugin.ap.Plugin
-import me.lucko.helper.plugin.ap.PluginDependency
+import gg.scala.commons.core.plugin.Plugin
+import gg.scala.commons.core.plugin.PluginAuthor
+import gg.scala.commons.core.plugin.PluginDependency
+import gg.scala.commons.core.plugin.PluginDependencyComposite
+import gg.scala.commons.core.plugin.PluginWebsite
 
 /**
  * @author GrowlyX
@@ -15,11 +18,12 @@ import me.lucko.helper.plugin.ap.PluginDependency
  */
 @Plugin(
     name = "cloudsync",
-    apiVersion = "1.18",
-    description = "Advanced server <-> cloud synchronization platform.",
-    depends = [
-        PluginDependency("scala-commons")
-    ]
+    version = "%remote%/%branch%/%id%"
+)
+@PluginAuthor("Scala")
+@PluginWebsite("https://scala.gg")
+@PluginDependencyComposite(
+    PluginDependency("scala-commons")
 )
 @ContainerConfig(
     value = "authentication",

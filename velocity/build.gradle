@@ -12,7 +12,7 @@ dependencies {
     compileOnly "com.velocitypowered:velocity-api:3.0.1"
     kapt "com.velocitypowered:velocity-api:3.0.1"
 
-    implementation "gg.scala.commons:velocity:2.1.7"
+    implementation "gg.scala.commons:velocity:3.0.2"
     implementation "commons-io:commons-io:2.11.0"
     implementation "gg.scala.flavor:flavor:0.1.6"
     implementation "org.reflections:reflections:0.10.2"
