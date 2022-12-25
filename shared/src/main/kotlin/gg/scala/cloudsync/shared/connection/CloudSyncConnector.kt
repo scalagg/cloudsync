@@ -90,7 +90,10 @@ object CloudSyncConnector
             }/${composite[1]}"
 
             val metadata = JFrogArtifactory
-                .findMetadata(composed)
+                .findMetadata(
+                    composed,
+                    composite.getOrNull(3)
+                )
 
             val mostRecent =
                 metadata.mostRecent()
@@ -105,7 +108,10 @@ object CloudSyncConnector
                     composite.getOrNull(3)
                 )
 
-            val archive = mostRecentMeta.archive()
+            val archive = mostRecentMeta
+                .archive(
+                    composite.getOrNull(3)
+                )
             archive.version = latestVersion
 
             lambda.invoke(

@@ -15,7 +15,9 @@ data class ArtifactMetadata(
     fun mostRecent() = children
         ?.lastOrNull { it.folder }
 
-    fun archive(): ArtifactComponentMetadata
+    fun archive(
+        repositoryOverride: String? = null
+    ): ArtifactComponentMetadata
     {
         val path = "$path${
             this.children!!
@@ -27,7 +29,7 @@ data class ArtifactMetadata(
 
         return JFrogArtifactory
             .findComponentMetadata(
-                path
+                path, repositoryOverride
             )
     }
 }
