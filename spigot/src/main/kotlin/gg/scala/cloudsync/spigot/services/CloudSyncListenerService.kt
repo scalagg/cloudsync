@@ -22,10 +22,12 @@ object CloudSyncListenerService : Listener
     @Inject
     lateinit var audiences: BukkitAudiences
 
+    var filterPlayerCanReceiveNotifications = { player: Player -> true }
+
     @EventHandler
     fun onJoin(event: PlayerJoinEvent)
     {
-        if (event.player.hasPermission("cloudsync.login.notifications"))
+        if (event.player.hasPermission("cloudsync.login.notifications") && filterPlayerCanReceiveNotifications.invoke(event.player))
         {
             val start = System.currentTimeMillis()
 

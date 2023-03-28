@@ -45,7 +45,9 @@ object CloudSyncConnector
     {
         usePendingUpdatesSync { asset, file, name ->
             val start = System.currentTimeMillis()
-            ScalaCloudSyncShared.logger.info("Downloading the latest $name (v${asset.version}) archive...")
+            ScalaCloudSyncShared.logger.info(
+                "Downloading the latest $name (v${asset.version}) archive..."
+            )
 
             try
             {
@@ -78,7 +80,6 @@ object CloudSyncConnector
     {
         val assets = CloudSyncDiscoveryService
             .discoverable.assets.toList()
-
 
         for (component in assets)
         {
