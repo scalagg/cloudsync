@@ -7,6 +7,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -22,7 +23,7 @@ object CloudSyncListenerService : Listener
     @Inject
     lateinit var audiences: BukkitAudiences
 
-    var filterPlayerCanReceiveNotifications = { player: Player -> true }
+    var filterPlayerCanReceiveNotifications = { _: Player -> true }
 
     @EventHandler
     fun onJoin(event: PlayerJoinEvent)
