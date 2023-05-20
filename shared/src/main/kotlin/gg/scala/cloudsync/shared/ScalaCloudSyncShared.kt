@@ -29,6 +29,8 @@ object ScalaCloudSyncShared
         platform.configureServices(this)
     }
 
+    val additionalDependencies = mutableListOf<String>()
+
     fun enable(platform: ScalaCloudSyncPlatform, platformName: String)
     {
         this.platform = platform
@@ -60,16 +62,7 @@ object ScalaCloudSyncShared
             return
         }
 
-        val assets = CloudSyncDiscoveryService
-            .discoverable.assets
-
-        globalContextFile.readLines()
-            .filterNot {
-                assets.contains(it)
-            }
-            .onEach {
-                assets.add(it)
-            }
+        additionalDependencies.addAll(globalContextFile.readLines())
     }
 
     fun disable()

@@ -1,5 +1,6 @@
 package gg.scala.cloudsync.spigot.command
 
+import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.cloudsync.spigot.pagination.CloudSyncPaginatedResult
@@ -59,5 +60,16 @@ object CloudSyncCommand : ScalaCommand()
                 .discoverable.assets,
             page ?: 1, "cloudsync tracked %s"
         )
+
+        if (ScalaCloudSyncShared.additionalDependencies.isNotEmpty())
+        {
+            sender.sendMessage(
+                "${CC.WHITE}=== Showing additional dependencies ==="
+            )
+            CloudSyncPaginatedResult.display(
+                sender, ScalaCloudSyncShared.additionalDependencies,
+                page ?: 1,
+            )
+        }
     }
 }

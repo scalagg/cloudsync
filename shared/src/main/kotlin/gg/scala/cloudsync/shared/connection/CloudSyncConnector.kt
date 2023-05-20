@@ -79,7 +79,11 @@ object CloudSyncConnector
     )
     {
         val assets = CloudSyncDiscoveryService
-            .discoverable.assets.toList()
+            .discoverable.assets.toMutableSet()
+
+        ScalaCloudSyncShared
+            .additionalDependencies
+            .onEach(assets::add)
 
         for (component in assets)
         {
