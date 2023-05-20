@@ -68,9 +68,6 @@ object ScalaCloudSyncVelocityPlatform : ScalaCloudSyncPlatform
                             it.discoveryUrl,
                             it.discoveryRepositories,
                             it.discoverable.toMutableList()
-                                .apply {
-                                    this += "gg.scala.cloudsync:velocity:cloudsync"
-                                }
                         )
                     }
 

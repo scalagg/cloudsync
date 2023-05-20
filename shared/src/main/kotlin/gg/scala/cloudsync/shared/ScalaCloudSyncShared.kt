@@ -37,13 +37,22 @@ object ScalaCloudSyncShared
         platform.getInjector()
             .bind<ScalaCloudSyncShared>() to this
 
+        val globalContextDirectory = File(
+            "/opt/cloudsync/contexts"
+        )
+
+        if (!globalContextDirectory.exists())
+        {
+            globalContextDirectory.mkdirs()
+        }
+
         val globalContextFile = File(
-            "/opt/cloudsync/${platformName.lowercase()}.context.txt"
+            globalContextDirectory,
+            "${platformName.lowercase()}.txt"
         )
 
         if (!globalContextFile.exists())
         {
-            globalContextFile.mkdirs()
             globalContextFile.createNewFile()
             logger.warning(
                 "A $platformName context file has been created at: ${globalContextFile.absolutePath}. Use this file to store any updating plugins for your $platformName servers."
