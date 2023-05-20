@@ -90,7 +90,8 @@ constructor(
                         event.player.sendMessage(
                             ScalaCloudSyncShared
                                 .createLoginMessage(
-                                    *pendingUpdates.toTypedArray()
+                                    *pendingUpdates.toTypedArray(),
+                                    theme = "&b"
                                 )
                                 .legacyToComponent()
                         )

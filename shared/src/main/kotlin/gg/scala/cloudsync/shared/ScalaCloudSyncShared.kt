@@ -43,6 +43,7 @@ object ScalaCloudSyncShared
 
         if (!globalContextFile.exists())
         {
+            globalContextFile.mkdirs()
             globalContextFile.createNewFile()
             logger.warning(
                 "A $platformName context file has been created at: ${globalContextFile.absolutePath}. Use this file to store any updating plugins for your $platformName servers."

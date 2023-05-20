@@ -31,7 +31,6 @@ object CloudSyncDiscoveryService
         ),
         val assets: MutableList<String> = mutableListOf(
             "gg.scala.commons:bukkit:sccommons-bukkit",
-            "gg.scala.cloudsync:spigot:cloudsync",
         )
     ) : AbstractTypeSerializable
     {
