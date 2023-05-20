@@ -42,4 +42,30 @@ object ScalaCloudSyncShared
     {
         platform.getInjector().close()
     }
+
+    fun createLoginMessage(
+        vararg updates: Pair<String, String>,
+        theme: String = "&6",
+    ): String
+    {
+        var loginMessage =
+            "${theme}Plugin updates are available for: "
+
+        for ((index, pair) in updates.withIndex())
+        {
+            if (
+                updates.size != 1 &&
+                index == updates.size - 1
+            )
+            {
+                loginMessage += "and "
+            }
+
+            loginMessage += "&f${pair.first} &7(${pair.second})${theme}${
+                if (index == updates.size - 1) "." else ", "
+            }"
+        }
+
+        return loginMessage
+    }
 }

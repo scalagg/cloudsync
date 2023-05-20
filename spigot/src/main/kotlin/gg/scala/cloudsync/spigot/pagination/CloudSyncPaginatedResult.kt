@@ -12,7 +12,7 @@ object CloudSyncPaginatedResult : PaginatedResult<String>()
     override fun format(result: String, resultIndex: Int): String
     {
         val split = result.split(":")
-        return "${CC.WHITE}$resultIndex. ${CC.SEC}(Group: ${CC.GREEN}${split[0]}${CC.SEC}, Module: ${CC.LIGHT_PURPLE}${split[1]}${CC.SEC}, Archive: ${CC.RED}${split[2]}${CC.SEC})"
+        return "${CC.WHITE}$resultIndex. ${CC.SEC}(Group: ${CC.GREEN}${split[0]}${CC.SEC}, Module: ${CC.LIGHT_PURPLE}${split[1]}${CC.SEC}, Archive: ${CC.RED}${split[2]}${CC.SEC}) ${split.getOrNull(3)}"
     }
 
     override fun getHeader(page: Int, maxPages: Int) =

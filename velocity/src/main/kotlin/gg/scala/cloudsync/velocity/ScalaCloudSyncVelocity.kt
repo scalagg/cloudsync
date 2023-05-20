@@ -74,25 +74,39 @@ constructor(
         )
         {
             val start = System.currentTimeMillis()
+            val pendingUpdates = mutableListOf<Pair<String, String>>()
 
-            CloudSyncConnector.usePendingUpdates { asset, _, name ->
-                event.player.sendMessage(
-                    LegacyComponentSerializer.legacyAmpersand()
-                        .deserialize(
-                            "&6&lArtifactory &7&l» &3A new version of &b$name&3 is available: &b${asset.version}&3."
-                        )
-                )
-            }.thenRun {
-                if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))
-                {
-                    event.player.sendMessage(
-                        LegacyComponentSerializer.legacyAmpersand()
-                            .deserialize(
-                                "&c[This process took more than 5 seconds, is the artifactory alright?]"
-                            )
-                    )
+            fun String.legacyToComponent() = LegacyComponentSerializer
+                .legacyAmpersand()
+                .deserialize(this)
+
+            CloudSyncConnector
+                .usePendingUpdates { asset, _, name ->
+                    pendingUpdates += name to asset.version
                 }
-            }
+                .thenRun {
+                    if (pendingUpdates.isNotEmpty())
+                    {
+                        event.player.sendMessage(
+                            ScalaCloudSyncShared
+                                .createLoginMessage(
+                                    *pendingUpdates.toTypedArray()
+                                )
+                                .legacyToComponent()
+                        )
+                    }
+
+                    if (
+                        System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L) &&
+                        pendingUpdates.isEmpty()
+                    )
+                    {
+                        event.player.sendMessage(
+                            "&c[This process took more than 5 seconds, is the artifactory alright?]"
+                                .legacyToComponent()
+                        )
+                    }
+                }
         }
     }
 

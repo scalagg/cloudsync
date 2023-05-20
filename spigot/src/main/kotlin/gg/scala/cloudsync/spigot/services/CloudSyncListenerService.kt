@@ -1,9 +1,11 @@
 package gg.scala.cloudsync.spigot.services
 
+import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.Color
 import net.evilblock.cubed.util.bukkit.Constants
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -28,24 +30,41 @@ object CloudSyncListenerService : Listener
     @EventHandler
     fun onJoin(event: PlayerJoinEvent)
     {
-        if (event.player.hasPermission("cloudsync.login.notifications") && filterPlayerCanReceiveNotifications.invoke(event.player))
+        if (
+            event.player.hasPermission("cloudsync.login.notifications") &&
+            filterPlayerCanReceiveNotifications.invoke(event.player)
+        )
         {
             val start = System.currentTimeMillis()
+            val pendingUpdates = mutableListOf<Pair<String, String>>()
 
-            CloudSyncConnector.usePendingUpdates { asset, _, name ->
-                audiences.player(event.player)
-                    .sendMessage(
-                        LegacyComponentSerializer.legacySection()
-                            .deserialize(
-                                "${CC.B_GREEN}Artifactory ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT}${CC.SEC} A new version of ${CC.PRI}$name${CC.SEC} is available: ${CC.PRI}${asset.version}${CC.SEC}."
-                            )
-                    )
-            }.thenRun {
-                if (System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L))
-                {
-                    event.player.sendMessage("${CC.RED}[This process took more than 5 seconds, is the artifactory alright?]")
+            CloudSyncConnector
+                .usePendingUpdates { asset, _, name ->
+                    pendingUpdates += name to asset.version
                 }
-            }
+                .thenRun {
+                    if (pendingUpdates.isNotEmpty())
+                    {
+                        event.player.sendMessage(
+                            Color.translate(
+                                ScalaCloudSyncShared
+                                    .createLoginMessage(
+                                        *pendingUpdates.toTypedArray()
+                                    )
+                            )
+                        )
+                    }
+
+                    if (
+                        System.currentTimeMillis() - start >= TimeUnit.SECONDS.toMillis(5L) &&
+                        pendingUpdates.isEmpty()
+                    )
+                    {
+                        event.player.sendMessage(
+                            "${CC.RED}[This process took more than 5 seconds, is the artifactory alright?]"
+                        )
+                    }
+                }
         }
     }
 }
