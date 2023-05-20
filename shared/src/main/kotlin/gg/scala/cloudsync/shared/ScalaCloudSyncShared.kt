@@ -29,13 +29,37 @@ object ScalaCloudSyncShared
         platform.configureServices(this)
     }
 
-    fun enable(platform: ScalaCloudSyncPlatform)
+    fun enable(platform: ScalaCloudSyncPlatform, platformName: String)
     {
         this.platform = platform
         platform.configureServices(this)
 
         platform.getInjector()
             .bind<ScalaCloudSyncShared>() to this
+
+        val globalContextFile = File(
+            "/opt/cloudsync/${platformName.lowercase()}.context.txt"
+        )
+
+        if (!globalContextFile.exists())
+        {
+            globalContextFile.createNewFile()
+            logger.warning(
+                "A $platformName context file has been created at: ${globalContextFile.absolutePath}. Use this file to store any updating plugins for your $platformName servers."
+            )
+            return
+        }
+
+        val assets = CloudSyncDiscoveryService
+            .discoverable.assets
+
+        globalContextFile.readLines()
+            .filterNot {
+                assets.contains(it)
+            }
+            .onEach {
+                assets.add(it)
+            }
     }
 
     fun disable()

@@ -61,7 +61,7 @@ constructor(
     fun onInitialize(event: ProxyInitializeEvent)
     {
         contextual<ScalaCloudSyncShared> {
-            ScalaCloudSyncShared.enable(ScalaCloudSyncVelocityPlatform)
+            ScalaCloudSyncShared.enable(ScalaCloudSyncVelocityPlatform, "Velocity")
         }
     }
 

@@ -11,6 +11,7 @@ import gg.scala.commons.core.plugin.PluginAuthor
 import gg.scala.commons.core.plugin.PluginDependency
 import gg.scala.commons.core.plugin.PluginDependencyComposite
 import gg.scala.commons.core.plugin.PluginWebsite
+import java.io.File
 
 /**
  * @author GrowlyX
@@ -46,6 +47,6 @@ class ScalaCloudSyncSpigot : ExtendedScalaPlugin()
         }
 
         ScalaCloudSyncShared
-            .enable(ScalaCloudSyncSpigotPlatform)
+            .enable(ScalaCloudSyncSpigotPlatform, "Spigot")
     }
 }
