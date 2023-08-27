@@ -2,13 +2,11 @@ package gg.scala.cloudsync.spigot.services
 
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.connection.CloudSyncConnector
-import gg.scala.commons.annotations.Listeners
+import gg.scala.cloudsync.spigot.ScalaCloudSyncSpigot
 import gg.scala.flavor.inject.Inject
-import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.Color
-import net.evilblock.cubed.util.bukkit.Constants
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -19,13 +17,21 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 1/21/2022
  */
-@Listeners
+@Service
 object CloudSyncListenerService : Listener
 {
-    @Inject
-    lateinit var audiences: BukkitAudiences
-
     var filterPlayerCanReceiveNotifications = { _: Player -> true }
+
+    @Inject
+    lateinit var plugin: ScalaCloudSyncSpigot
+
+    @Configure
+    fun configure()
+    {
+        plugin.server.pluginManager.registerEvents(
+            this, plugin
+        )
+    }
 
     @EventHandler
     fun onJoin(event: PlayerJoinEvent)
@@ -46,7 +52,8 @@ object CloudSyncListenerService : Listener
                     if (pendingUpdates.isNotEmpty())
                     {
                         event.player.sendMessage(
-                            Color.translate(
+                            ChatColor.translateAlternateColorCodes(
+                                '&',
                                 ScalaCloudSyncShared
                                     .createLoginMessage(
                                         *pendingUpdates.toTypedArray()
@@ -61,7 +68,7 @@ object CloudSyncListenerService : Listener
                     )
                     {
                         event.player.sendMessage(
-                            "${CC.RED}[This process took more than 5 seconds, is the artifactory alright?]"
+                            "${ChatColor.RED}[This process took more than 5 seconds, is the artifactory alright?]"
                         )
                     }
                 }

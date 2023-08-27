@@ -40,7 +40,8 @@ object ScalaCloudSyncShared
             .bind<ScalaCloudSyncShared>() to this
 
         val globalContextDirectory = File(
-            "/opt/cloudsync/contexts"
+            System.getProperty("user.home"),
+            ".cloudsync"
         )
 
         if (!globalContextDirectory.exists())

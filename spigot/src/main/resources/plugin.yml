@@ -1,0 +1,5 @@
+website: https://scala.gg
+author: Scala
+name: CloudSync
+main: gg.scala.cloudsync.spigot.ScalaCloudSyncSpigot
+version: loveyou

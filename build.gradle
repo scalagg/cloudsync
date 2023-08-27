@@ -42,26 +42,22 @@ subprojects {
             implementation project(":shared")
         }
 
-        compileOnly "gg.scala.flavor:flavor:0.1.6"
-        compileOnly "com.konghq:unirest-java:3.13.6:standalone"
+        implementation "gg.scala.flavor:flavor:0.1.6"
+        implementation "gg.scala.commons:serializers:2.1.0"
+        implementation "com.konghq:unirest-java:3.13.6:standalone"
 
-        compileOnly "com.google.guava:guava:31.0.1-jre"
-        compileOnly "commons-io:commons-io:2.11.0"
+        implementation "com.google.guava:guava:31.0.1-jre"
+        implementation "commons-io:commons-io:2.11.0"
 
-        compileOnly "gg.scala.commons:serializers:2.1.0"
     }
 
     compileKotlin {
         kotlinOptions.javaParameters = true
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = "1.8"
     }
 
     shadowJar {
         archiveClassifier.set("")
-
-        exclude "**/*.kotlin_metadata"
-        exclude "**/*.kotlin_builtins"
-        exclude "META-INF/"
 
         archiveFileName = "cloudsync.jar"
     }
