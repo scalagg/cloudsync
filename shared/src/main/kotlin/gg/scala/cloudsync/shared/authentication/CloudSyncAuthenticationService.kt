@@ -11,7 +11,6 @@ import kotlin.properties.Delegates
  * @author GrowlyX
  * @since 1/21/2022
  */
-@Service(priority = 50)
 object CloudSyncAuthenticationService
 {
     lateinit var authentication: ScalaConnectionAuthenticationWrapper
@@ -25,7 +24,8 @@ object CloudSyncAuthenticationService
     fun getWrapper() = authentication
 
     class ScalaConnectionAuthenticationWrapper(
-        val apiKey: String = "token"
+        val username: String = "admin",
+        val password: String = "6^QaR8lEt5gVEEOYLHlof^EenbUqzBp3!480XnrLY!SAH4&hdZ",
     ) : AbstractTypeSerializable
     {
         override fun getAbstractType() =

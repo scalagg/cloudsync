@@ -1,6 +1,7 @@
 package gg.scala.cloudsync.shared
 
 import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
+import gg.scala.cloudsync.shared.connection.CloudSyncConnector
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import java.io.File
 
@@ -39,6 +40,10 @@ object ScalaCloudSyncShared
         platform.getInjector()
             .bind<ScalaCloudSyncShared>() to this
 
+        CloudSyncAuthenticationService.configure()
+        CloudSyncDiscoveryService.configure()
+        CloudSyncConnector.configure()
+
         val globalContextDirectory = File(
             System.getProperty("user.home"),
             ".cloudsync"
@@ -68,7 +73,7 @@ object ScalaCloudSyncShared
 
     fun disable()
     {
-        platform.getInjector().close()
+        CloudSyncConnector.close()
     }
 
     fun createLoginMessage(

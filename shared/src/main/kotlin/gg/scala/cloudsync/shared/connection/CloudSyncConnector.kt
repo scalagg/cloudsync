@@ -23,10 +23,8 @@ import java.util.logging.Level
  * @author GrowlyX
  * @since 1/21/2022
  */
-@Service(priority = 40)
 object CloudSyncConnector
 {
-    @Configure
     fun configure()
     {
         usePendingUpdates { asset, _, name ->
@@ -34,10 +32,8 @@ object CloudSyncConnector
         }
     }
 
-    @Close
     fun close()
     {
-        ScalaCloudSyncShared.reload()
         applyPendingUpdates()
     }
 
@@ -179,7 +175,10 @@ object CloudSyncConnector
         val wrapper = CloudSyncAuthenticationService.getWrapper()
 
         return Unirest.get(request)
-            .header("X-JFrog-Art-Api", wrapper.apiKey)
+            .basicAuth(
+                wrapper.username,
+                wrapper.password
+            )
             .connectTimeout(1000)
     }
 }

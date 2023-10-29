@@ -4,6 +4,7 @@ import gg.scala.cloudsync.shared.ScalaCloudSyncPlatform
 import gg.scala.cloudsync.shared.ScalaCloudSyncShared
 import gg.scala.cloudsync.shared.authentication.CloudSyncAuthenticationService
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
+import gg.scala.cloudsync.spigot.services.CloudSyncListenerService
 import gg.scala.flavor.inject.Inject
 import org.bukkit.Bukkit
 import xyz.mkotb.configapi.ConfigFactory
@@ -13,11 +14,10 @@ import java.io.File
  * @author GrowlyX
  * @since 1/26/2022
  */
-object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
+class ScalaCloudSyncSpigotPlatform(
+    private val spigot: ScalaCloudSyncSpigot
+) : ScalaCloudSyncPlatform
 {
-    @Inject
-    lateinit var spigot: ScalaCloudSyncSpigot
-
     override fun getLogger() = spigot.logger
     override fun getInjector() = spigot.flavor
 
@@ -27,6 +27,8 @@ object ScalaCloudSyncSpigotPlatform : ScalaCloudSyncPlatform
         shared.pluginContainer = File(
             Bukkit.getWorldContainer(), "plugins"
         )
+
+        CloudSyncListenerService.configure(spigot)
 
         val configFactory = ConfigFactory.newFactory(spigot)
 

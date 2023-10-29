@@ -20,12 +20,12 @@ class ScalaCloudSyncSpigot : ExtendedJavaPlugin()
 
     override fun enable()
     {
-        with(flavor) {
-            bind<ScalaCloudSyncSpigot>() to this@ScalaCloudSyncSpigot
-            inject(ScalaCloudSyncSpigotPlatform)
-        }
-
         ScalaCloudSyncShared
-            .enable(ScalaCloudSyncSpigotPlatform, "Spigot")
+            .enable(ScalaCloudSyncSpigotPlatform(this), "Spigot")
+    }
+
+    override fun disable()
+    {
+        ScalaCloudSyncShared.disable()
     }
 }

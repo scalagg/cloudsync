@@ -10,13 +10,11 @@ import kotlin.properties.Delegates
  * @author GrowlyX
  * @since 1/21/2022
  */
-@Service(priority = 45)
 object CloudSyncDiscoveryService
 {
     var discoverable by Delegates
         .notNull<DiscoverableAssets>()
 
-    @Configure
     fun configure()
     {
         discoverable = ScalaCloudSyncShared.discoverable

@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 1/21/2022
  */
-@Service
 object CloudSyncListenerService : Listener
 {
     var filterPlayerCanReceiveNotifications = { _: Player -> true }
@@ -25,9 +24,9 @@ object CloudSyncListenerService : Listener
     @Inject
     lateinit var plugin: ScalaCloudSyncSpigot
 
-    @Configure
-    fun configure()
+    fun configure(plugin: ScalaCloudSyncSpigot)
     {
+        this.plugin = plugin
         plugin.server.pluginManager.registerEvents(
             this, plugin
         )
