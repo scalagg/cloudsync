@@ -1,106 +1,81 @@
 plugins {
-    id "maven-publish"
-    id "com.jfrog.artifactory" version "4.28.2"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "org.jetbrains.kotlin.jvm" version "1.9.10"
-    id "org.jetbrains.kotlin.kapt" version "1.9.10"
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.10'
+    id 'org.jetbrains.kotlin.kapt' version '1.9.10'
 }
 
 allprojects {
-    group "gg.scala.cloudsync"
-    version "1.0.4"
-
-    description "Advanced server <-> cloud synchronization platform"
+    group = 'gg.scala.cloudsync'
+    version = '1.0.4'
+    description = 'Advanced server <-> cloud synchronization platform'
 
     repositories {
         mavenCentral()
-
         maven {
-            url "${property("artifactory_contextUrl")}/gradle-release"
+            url 'https://artifactory.scala.gg/scala'
             credentials {
-                username property("artifactory_user")
-                password property("artifactory_password")
+                username = findProperty('reposilite_user')
+                password = findProperty('reposilite_password')
             }
         }
-
-        maven { url "https://jitpack.io" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
 }
 
 subprojects {
-    apply plugin: "maven-publish"
-    apply plugin: "com.github.johnrengelman.shadow"
-
-    apply plugin: "org.jetbrains.kotlin.jvm"
-    apply plugin: "org.jetbrains.kotlin.kapt"
-
-    apply plugin: "com.jfrog.artifactory"
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'org.jetbrains.kotlin.kapt'
 
     dependencies {
-        if (project.name != "shared") {
-            implementation project(":shared")
+        if (project.name != 'shared') {
+            implementation project(':shared')
         }
 
-        compileOnly "gg.scala.flavor:flavor:0.1.6"
-        compileOnly "com.konghq:unirest-java:3.13.6:standalone"
-
-        compileOnly "com.google.guava:guava:31.0.1-jre"
-        compileOnly "commons-io:commons-io:2.11.0"
-
-        compileOnly "gg.scala.commons:serializers:2.1.0"
+        compileOnly 'gg.scala.flavor:flavor:0.1.6'
+        compileOnly 'com.konghq:unirest-java:3.13.6:standalone'
+        compileOnly 'com.google.guava:guava:31.0.1-jre'
+        compileOnly 'commons-io:commons-io:2.11.0'
+        compileOnly 'gg.scala.commons:serializers:2.1.0'
     }
 
-    compileKotlin {
-        kotlinOptions.javaParameters = true
-        kotlinOptions.jvmTarget = "17"
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+        kotlinOptions {
+            javaParameters = true
+            jvmTarget = '17'
+        }
     }
 
-    shadowJar {
-        archiveClassifier.set("")
-
-        exclude "**/*.kotlin_metadata"
-        exclude "**/*.kotlin_builtins"
-        exclude "META-INF/"
-
-        archiveFileName = "cloudsync.jar"
+    tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+        archiveClassifier.set('')
+        exclude '**/*.kotlin_metadata', '**/*.kotlin_builtins', 'META-INF/'
+        archiveFileName = 'cloudsync.jar'
     }
 
     publishing {
         publications {
-            shadow(MavenPublication) { publication ->
-                project.shadow.component(publication)
+            maven(MavenPublication) {
+                groupId = project.group
+                artifactId = project.name
+                version = project.version
+                from components.java
             }
         }
 
         repositories {
             maven {
-                name "scala"
-                url "${property("artifactory_contextUrl")}/gradle-release"
-
+                name = 'Reposilite'
+                url = uri('https://artifactory.scala.gg/scala')
                 credentials {
-                    username property("artifactory_user")
-                    password property("artifactory_password")
+                    username = findProperty('reposilite_user')
+                    password = findProperty('reposilite_password')
                 }
             }
         }
     }
 
-    tasks.build.dependsOn(
-        shadowJar,
-        publishShadowPublicationToScalaRepository
-    )
-}
-
-artifactory {
-    this.contextUrl = property("artifactory_contextUrl")
-
-    publish {
-        repository {
-            repoKey = property("artifactory_release_local")
-            username = property("artifactory_user")
-            password = property("artifactory_password")
-            maven = true
-        }
-    }
+    tasks.build.dependsOn tasks.named('shadowJar')
 }
