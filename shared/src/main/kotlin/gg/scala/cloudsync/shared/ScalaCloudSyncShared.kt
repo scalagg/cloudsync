@@ -39,8 +39,8 @@ object ScalaCloudSyncShared
         platform.getInjector()
             .bind<ScalaCloudSyncShared>() to this
 
-        val globalContextDirectory = File(
-            "/opt/cloudsync/contexts"
+/*        val globalContextDirectory = File(
+            "/contexts"
         )
 
         if (!globalContextDirectory.exists())
@@ -62,7 +62,7 @@ object ScalaCloudSyncShared
             return
         }
 
-        additionalDependencies.addAll(globalContextFile.readLines())
+        additionalDependencies.addAll(globalContextFile.readLines())*/
     }
 
     fun disable()

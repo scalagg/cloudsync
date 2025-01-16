@@ -72,6 +72,7 @@ object ScalaCloudSyncVelocityPlatform : ScalaCloudSyncPlatform
                     }
 
             shared.discoverable.assets += "gg.scala.cloudsync:velocity:cloudsync"
+            shared.discoverable.assets += "gg.scala.store:velocity:store-velocity"
 
             getInjector().bind<ScalaCloudSyncPlatform>() to this@ScalaCloudSyncVelocityPlatform
             getInjector().bind<ScalaCloudSyncShared>() to ScalaCloudSyncShared
