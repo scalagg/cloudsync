@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group "gg.scala.cloudsync"
-    version "1.0.4"
+    version "1.0.5"
 
     description "Advanced server <-> cloud synchronization platform"
 
