@@ -27,7 +27,7 @@ object CloudSyncDiscoveryService
     class DiscoverableAssets(
         val discoveryUrl: String = "https://artifacts.scala.gg",
         val discoveryRepositories: List<String> = listOf(
-            "scala-remote-cache"
+            "scala-remote"
         ),
         val assets: MutableList<String> = mutableListOf(
             "gg.scala.commons:bukkit:sccommons-bukkit",
