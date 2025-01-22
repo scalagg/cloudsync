@@ -22,7 +22,7 @@ object JFrogArtifactory
             .request(
                 "${assets.discoveryUrl}/artifactory/api/storage/${
                     repositoryOverride ?: assets.discoveryRepositories.first()
-                }/${path.removePrefix("gg/")}"
+                }/$path"
             )
             .asString().body
 
@@ -42,7 +42,7 @@ object JFrogArtifactory
             .request(
                 "${assets.discoveryUrl}/artifactory/api/storage/${
                     repositoryOverride ?: assets.discoveryRepositories.first()
-                }/${path.removePrefix("gg/")}"
+                }/$path"
             )
             .asString().body
 
