@@ -88,7 +88,6 @@ object CloudSyncConnector
         for (component in assets)
         {
             val composite = component
-                .removePrefix("gg.")
                 .split(":")
 
             val composed = "${
